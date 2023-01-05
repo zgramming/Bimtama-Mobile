@@ -25,9 +25,14 @@ final dosenRoutes = <RouteBase>[
     builder: (context, state) => const dosen.HomePage(),
   ),
   GoRoute(
-    path: "/dosen/group/form",
+    path: "/dosen/group/form/:id",
     name: routeDosenGroupForm,
-    builder: (context, state) => const dosen.GroupFormPage(),
+    builder: (context, state) {
+      final id = state.params['id'] ?? "0";
+      return dosen.GroupFormPage(
+        id: id.isEmpty ? 0 : int.parse(id),
+      );
+    },
   ),
 ];
 

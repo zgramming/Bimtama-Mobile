@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dosen/dosen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'src/model/datasource/authentication_remote_datasource.dart';
@@ -16,12 +17,24 @@ final authenticationNotifier =
       repository: ref.watch(_authenticationRepository));
 });
 
+final lectureGroupNotifier = StateNotifierProvider<GroupNotifier, GroupState>(
+  (ref) => GroupNotifier(
+    repository: ref.watch(_lectureGroupRepository),
+  ),
+);
+
 final _authenticationRepository = Provider((ref) => AuthenticationRepository(
     remoteDatasource: ref.watch(_authenticationRemoteDatasource)));
+
+final _lectureGroupRepository = Provider((ref) => GroupRepository(
+    remoteDatasource: ref.watch(_lectureGroupRemoteDatasource)));
 
 final _authenticationRemoteDatasource = Provider(
   (ref) => AuthenticationRemoteDatasource(dio: ref.watch(dioClient)),
 );
+
+final _lectureGroupRemoteDatasource =
+    Provider((ref) => GroupRemoteDatasource(dio: ref.watch(dioClient)));
 
 final dioClient = Provider((ref) {
   final options = BaseOptions(
