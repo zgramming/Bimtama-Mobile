@@ -16,22 +16,22 @@ final routerConfig = GoRouter(
     GoRoute(
       path: "/splash",
       name: routeSplash,
-      builder: (context, state) => SplashPage(),
+      builder: (context, state) => const SplashPage(),
     ),
     GoRoute(
       path: "/login",
       name: routeLogin,
-      builder: (context, state) => LoginPage(),
+      builder: (context, state) => const LoginPage(),
     ),
     GoRoute(
       path: "/register",
       name: routeRegister,
-      builder: (context, state) => RegisterPage(),
+      builder: (context, state) => const RegisterPage(),
     ),
     GoRoute(
       path: "/home",
       name: routeHome,
-      builder: (context, state) => HomePage(),
+      builder: (context, state) => const HomePage(),
     ),
   ],
 );

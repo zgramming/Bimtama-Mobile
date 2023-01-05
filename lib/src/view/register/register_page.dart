@@ -1,5 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:bimtama/src/model/model/register_response_model.dart';
+import 'package:bimtama/router.dart';
+import 'package:bimtama/src/model/model/user_model.dart';
 import 'package:bimtama/src/utils/colors.dart';
 import 'package:bimtama/src/utils/functions.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bimtama/injection.dart';
 import 'package:bimtama/src/utils/fonts.dart';
 import 'package:bimtama/src/utils/styles.dart';
-import 'package:bimtama/widgets/form_body.dart';
+import 'package:bimtama/src/view_model/widgets/form_body.dart';
+import 'package:go_router/go_router.dart';
 
 class _UserGroupType {
   final String code;
@@ -54,15 +55,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue<RegisterData?>>(
+    ref.listen<AsyncValue<UserModel?>>(
         authenticationNotifier.select((value) => value.onRegister),
         (previous, next) {
       next.when(
-        data: (data) => showSnackbar(
-          context,
-          text: const Text("Success"),
-          color: Colors.green,
-        ),
+        data: (data) {
+          if (data != null) ref.read(userNotifier.notifier).setUser(data);
+          context.goNamed(routeHome);
+        },
         error: (error, stackTrace) => showSnackbar(
           context,
           text: Text("$error"),

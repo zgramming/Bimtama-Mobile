@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bimtama/src/model/model/login_response_model.dart';
 import 'package:bimtama/src/model/model/register_response_model.dart';
+import 'package:bimtama/src/model/model/user_model.dart';
 import 'package:bimtama/src/utils/failure.dart';
 
 class AuthenticationRemoteDatasource {
@@ -15,7 +17,7 @@ class AuthenticationRemoteDatasource {
     required this.dio,
   });
 
-  Future<LoginData?> login({
+  Future<UserModel?> login({
     required String username,
     required String password,
   }) async {
@@ -29,7 +31,7 @@ class AuthenticationRemoteDatasource {
       Map<String, dynamic>.from(request.data),
     );
 
-    if (!response.success) {
+    if (!response.success || response.data == null) {
       if (response.message is List) {
         throw ValidationFailure(response.message);
       }
@@ -37,11 +39,13 @@ class AuthenticationRemoteDatasource {
       throw CommonFailure(response.message);
     }
 
-    final data = response.data;
-    return data;
+    return UserModel(
+      data: response.data!,
+      token: response.token!,
+    );
   }
 
-  Future<RegisterData?> register({
+  Future<UserModel?> register({
     required String codeGroup,
     required String username,
     required String password,
@@ -54,7 +58,7 @@ class AuthenticationRemoteDatasource {
     final request = await dio.post("/beta/register", data: formData);
     final response = RegisterResponseModel.fromJson(request.data);
 
-    if (!response.success) {
+    if (!response.success || response.data == null) {
       if (response.message is List) {
         throw ValidationFailure(response.message);
       }
@@ -62,8 +66,10 @@ class AuthenticationRemoteDatasource {
       throw CommonFailure(response.message);
     }
 
-    final data = response.data;
-    return data;
+    return UserModel(
+      data: response.data!,
+      token: response.token!,
+    );
   }
 }
 
@@ -73,7 +79,7 @@ class AuthenticationRepository {
     required this.remoteDatasource,
   });
 
-  Future<Either<Failure, LoginData?>> login({
+  Future<Either<Failure, UserModel?>> login({
     required String username,
     required String password,
   }) async {
@@ -88,7 +94,7 @@ class AuthenticationRepository {
     }
   }
 
-  Future<Either<Failure, RegisterData?>> register({
+  Future<Either<Failure, UserModel?>> register({
     required String username,
     required String password,
     required String codeGroup,
@@ -107,8 +113,8 @@ class AuthenticationRepository {
 }
 
 class AuthenticationNotifierState extends Equatable {
-  final AsyncValue<LoginData?> onLogin;
-  final AsyncValue<RegisterData?> onRegister;
+  final AsyncValue<UserModel?> onLogin;
+  final AsyncValue<UserModel?> onRegister;
 
   const AuthenticationNotifierState({
     this.onLogin = const AsyncData(null),
@@ -122,8 +128,8 @@ class AuthenticationNotifierState extends Equatable {
   bool get stringify => true;
 
   AuthenticationNotifierState copyWith({
-    AsyncValue<LoginData?>? onLogin,
-    AsyncValue<RegisterData?>? onRegister,
+    AsyncValue<UserModel?>? onLogin,
+    AsyncValue<UserModel?>? onRegister,
   }) {
     return AuthenticationNotifierState(
       onLogin: onLogin ?? this.onLogin,

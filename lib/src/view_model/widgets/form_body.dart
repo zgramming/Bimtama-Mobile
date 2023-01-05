@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../src/utils/fonts.dart';
+import '../../utils/fonts.dart';
 
 class FormBody extends StatelessWidget {
   const FormBody({

@@ -1,8 +1,14 @@
-import 'package:bimtama/src/model/datasource/authentication_remote_datasource.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bimtama/src/model/datasource/authentication_remote_datasource.dart';
+
 import 'src/utils/constant.dart';
+import 'src/view_model/user/user_notifier.dart';
+
+final userNotifier = StateNotifierProvider<UserNotifier, UserState>(
+  (ref) => UserNotifier(),
+);
 
 final authenticationNotifier =
     StateNotifierProvider<AuthenticationNotifier, AuthenticationNotifierState>(

@@ -1,18 +1,15 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:bimtama/injection.dart';
-import 'package:bimtama/router.dart';
-import 'package:bimtama/src/model/model/login_response_model.dart';
-import 'package:bimtama/src/utils/colors.dart';
-import 'package:bimtama/src/utils/functions.dart';
-import 'package:bimtama/src/utils/styles.dart';
-import 'package:flutter/material.dart';
+import 'dart:developer';
 
-import 'package:bimtama/src/utils/fonts.dart';
-import 'package:bimtama/src/utils/sizes.dart';
+import 'package:bimtama/src/model/model/user_model.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../widgets/form_body.dart';
+import 'package:bimtama/injection.dart';
+import 'package:bimtama/router.dart';
+
+import '../../view_model/widgets/form_body.dart';
+import '../../utils/utils.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -23,6 +20,7 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   bool isObsecure = true;
+  bool isLoading = false;
 
   late final TextEditingController usernameController;
   late final TextEditingController passwordController;
@@ -43,15 +41,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue<LoginData?>>(
+    ref.listen<AsyncValue<UserModel?>>(
       authenticationNotifier.select((value) => value.onLogin),
       (previous, next) {
         next.when(
-          data: (data) => showSnackbar(
-            context,
-            text: Text("Success"),
-            color: Colors.green,
-          ),
+          data: (data) {
+            if (data != null) {
+              ref.read(userNotifier.notifier).setUser(data);
+            }
+            context.goNamed(routeHome);
+          },
           error: (error, stackTrace) => showSnackbar(
             context,
             text: Text("$error"),
@@ -59,14 +58,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           ),
           loading: () => showSnackbar(
             context,
-            text: Text("Loading..."),
+            text: const Text("Loading..."),
             color: secondary,
           ),
         );
       },
     );
     return AbsorbPointer(
-      absorbing: false,
+      absorbing: isLoading,
       child: Scaffold(
         body: SingleChildScrollView(
           child: Container(
