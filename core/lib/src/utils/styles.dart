@@ -1,6 +1,5 @@
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
-
-import 'colors.dart';
 
 ButtonStyle elevatedButtonStyle({
   Color? backgroundColor,
@@ -30,6 +29,7 @@ ButtonStyle outlineButtonStyle({
 
 InputDecoration inputDecorationRounded({double? radius}) => InputDecoration(
       contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+      hintStyle: bodyFont.copyWith(fontSize: 12.0),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radius ?? 10),
       ),

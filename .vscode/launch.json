@@ -1,0 +1,85 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "bimtama",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "bimtama (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "bimtama (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "core",
+            "cwd": "core",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "core (profile mode)",
+            "cwd": "core",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "core (release mode)",
+            "cwd": "core",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "dosen",
+            "cwd": "user_group\\dosen",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "dosen (profile mode)",
+            "cwd": "user_group\\dosen",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "dosen (release mode)",
+            "cwd": "user_group\\dosen",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "mahasiswa",
+            "cwd": "user_group\\mahasiswa",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "mahasiswa (profile mode)",
+            "cwd": "user_group\\mahasiswa",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "mahasiswa (release mode)",
+            "cwd": "user_group\\mahasiswa",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

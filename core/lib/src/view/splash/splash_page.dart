@@ -8,7 +8,7 @@ import '../../../injection.dart';
 import '../../../router.dart';
 import '../../model/model/user_model.dart';
 import '../../utils/utils.dart';
-import '../../view_model/widgets/modal_error.dart';
+import '../widgets/modal_error.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -34,14 +34,15 @@ class _SplashPageState extends ConsumerState<SplashPage> {
             final group = data?.data.appGroupUser.code;
             redirectHome(
               data,
+              whenUnauthorized: () => context.goNamed(routeLogin),
               onForbiddenUserGrup: () => showSnackbar(
                 context,
                 text: Text("Usergroup $group tidak tersedia"),
                 color: Colors.red,
               ),
               saveSession: () => ref.read(userNotifier.notifier).setUser(data!),
-              whenDosen: () => context.goNamed(routeHomeDosen),
-              whenMahasiswa: () => context.goNamed(routeHomeMahasiswa),
+              whenDosen: () => context.goNamed(routeDosenHome),
+              whenMahasiswa: () => context.goNamed(routeMahasiswaHome),
             );
           },
           error: (error, stackTrace) {

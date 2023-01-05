@@ -7,7 +7,7 @@ import '../../../injection.dart';
 import '../../../router.dart';
 import '../../model/model/user_model.dart';
 import '../../utils/utils.dart';
-import '../../view_model/widgets/form_body.dart';
+import '../widgets/form_body.dart';
 
 class _UserGroupType {
   final String code;
@@ -61,14 +61,15 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           final group = data?.data.appGroupUser.code;
           redirectHome(
             data,
+            whenUnauthorized: () => context.goNamed(routeLogin),
             onForbiddenUserGrup: () => showSnackbar(
               context,
               text: Text("Usergroup $group tidak tersedia"),
               color: Colors.red,
             ),
             saveSession: () => ref.read(userNotifier.notifier).setUser(data!),
-            whenDosen: () => context.goNamed(routeHomeDosen),
-            whenMahasiswa: () => context.goNamed(routeHomeMahasiswa),
+            whenDosen: () => context.goNamed(routeDosenHome),
+            whenMahasiswa: () => context.goNamed(routeMahasiswaHome),
           );
         },
         error: (error, stackTrace) => showSnackbar(

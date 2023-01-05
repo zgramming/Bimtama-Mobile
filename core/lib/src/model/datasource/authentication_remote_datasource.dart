@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
@@ -25,7 +23,6 @@ class AuthenticationRemoteDatasource {
       "password": password,
     });
     final request = await dio.post("/login", data: formData);
-    log("$request");
     final response = LoginResponseModel.fromJson(
       Map<String, dynamic>.from(request.data),
     );

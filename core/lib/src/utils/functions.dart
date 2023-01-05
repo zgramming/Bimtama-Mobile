@@ -32,17 +32,21 @@ void redirectHome(
   required VoidCallback saveSession,
   required VoidCallback whenDosen,
   required VoidCallback whenMahasiswa,
+  required VoidCallback whenUnauthorized,
 }) {
-  final codeGroup = user?.data.appGroupUser.code;
+  if (user == null) {
+    whenUnauthorized();
+    return;
+  }
+
+  final codeGroup = user.data.appGroupUser.code;
 
   if (!availableUserGroup.contains(codeGroup)) {
     onForbiddenUserGrup();
     return;
   }
 
-  if (user != null) {
-    saveSession();
-  }
+  saveSession();
 
   if (codeGroup == "mahasiswa") {
     whenMahasiswa();
@@ -53,4 +57,14 @@ void redirectHome(
     whenDosen();
     return;
   }
+}
+
+String stringToSlug(String value) {
+  final result = value
+      .trim()
+      .toLowerCase()
+      .replaceAll(RegExp(r'\s{2,}'), ' ')
+      .replaceAll(RegExp(r'[^\w\s-]'), '')
+      .replaceAll(' ', '-');
+  return result;
 }

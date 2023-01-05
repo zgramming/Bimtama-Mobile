@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../injection.dart';
 import '../../../router.dart';
 import '../../model/model/user_model.dart';
-import '../../view_model/widgets/form_body.dart';
+import '../widgets/form_body.dart';
 import '../../utils/utils.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -52,8 +52,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 color: Colors.red,
               ),
               saveSession: () => ref.read(userNotifier.notifier).setUser(data!),
-              whenDosen: () => context.goNamed(routeHomeDosen),
-              whenMahasiswa: () => context.goNamed(routeHomeMahasiswa),
+              whenUnauthorized: () => context.goNamed(routeLogin),
+              whenDosen: () => context.goNamed(routeDosenHome),
+              whenMahasiswa: () => context.goNamed(routeMahasiswaHome),
             );
           },
           error: (error, stackTrace) => showSnackbar(
@@ -69,97 +70,91 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         );
       },
     );
-    return AbsorbPointer(
-      absorbing: isLoading,
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-            // color: primary,
-            padding:
-                EdgeInsets.symmetric(vertical: statusBarHeight(context) + 8.0),
-            constraints: BoxConstraints(
-              minHeight: h(context),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Card(
-                  margin: const EdgeInsets.all(16.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          "Form Login",
-                          textAlign: TextAlign.center,
-                          style: bodyFontBold.copyWith(fontSize: 20.0),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          padding:
+              EdgeInsets.symmetric(vertical: statusBarHeight(context) + 8.0),
+          constraints: BoxConstraints(
+            minHeight: h(context),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Card(
+                margin: const EdgeInsets.all(16.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        "Form Login",
+                        textAlign: TextAlign.center,
+                        style: bodyFontBold.copyWith(fontSize: 20.0),
+                      ),
+                      const SizedBox(height: 24.0),
+                      FormBody(
+                        title: "Username",
+                        child: TextFormField(
+                          controller: usernameController,
+                          decoration: inputDecorationRounded(),
                         ),
-                        const SizedBox(height: 24.0),
-                        FormBody(
-                          title: "Username",
-                          child: TextFormField(
-                            controller: usernameController,
-                            decoration: inputDecorationRounded(),
-                          ),
-                        ),
-                        const SizedBox(height: 24.0),
-                        FormBody(
-                          title: "Password",
-                          child: TextFormField(
-                            controller: passwordController,
-                            obscureText: isObsecure,
-                            keyboardType: TextInputType.visiblePassword,
-                            decoration: inputDecorationRounded().copyWith(
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    isObsecure = !isObsecure;
-                                  });
-                                },
-                                icon: Icon(isObsecure
-                                    ? Icons.visibility_off
-                                    : Icons.visibility),
-                              ),
+                      ),
+                      const SizedBox(height: 24.0),
+                      FormBody(
+                        title: "Password",
+                        child: TextFormField(
+                          controller: passwordController,
+                          obscureText: isObsecure,
+                          keyboardType: TextInputType.visiblePassword,
+                          decoration: inputDecorationRounded().copyWith(
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  isObsecure = !isObsecure;
+                                });
+                              },
+                              icon: Icon(isObsecure
+                                  ? Icons.visibility_off
+                                  : Icons.visibility),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24.0),
-                        ElevatedButton(
-                          onPressed: () async {
-                            await ref
-                                .read(authenticationNotifier.notifier)
-                                .login(
-                                  username: usernameController.text,
-                                  password: passwordController.text,
-                                );
-                          },
-                          style:
-                              elevatedButtonStyle(backgroundColor: Colors.blue),
-                          child: Text(
-                            "LOGIN",
-                            style: bodyFontBold.copyWith(fontSize: 16.0),
-                          ),
+                      ),
+                      const SizedBox(height: 24.0),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await ref.read(authenticationNotifier.notifier).login(
+                                username: usernameController.text,
+                                password: passwordController.text,
+                              );
+                        },
+                        style:
+                            elevatedButtonStyle(backgroundColor: Colors.blue),
+                        child: Text(
+                          "LOGIN",
+                          style: bodyFontBold.copyWith(fontSize: 16.0),
                         ),
-                        const SizedBox(height: 16.0),
-                        OutlinedButton(
-                          onPressed: () {
-                            context.pushNamed(routeRegister);
-                          },
-                          style: outlineButtonStyle(),
-                          child: Text(
-                            "REGISTER",
-                            style: bodyFontBold.copyWith(fontSize: 16.0),
-                          ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      OutlinedButton(
+                        onPressed: () {
+                          context.pushNamed(routeRegister);
+                        },
+                        style: outlineButtonStyle(),
+                        child: Text(
+                          "REGISTER",
+                          style: bodyFontBold.copyWith(fontSize: 16.0),
                         ),
-                        const SizedBox(height: 24.0),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 24.0),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

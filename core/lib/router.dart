@@ -12,10 +12,32 @@ const routeRegister = 'register';
 const routeSplash = 'splash';
 
 /// Dosen
-const routeHomeDosen = 'dosen/home';
+const routeDosenHome = 'dosen/home';
+const routeDosenGroupForm = 'dosen/group/form';
 
 /// Mahasiswa
-const routeHomeMahasiswa = 'mahasiswa/home';
+const routeMahasiswaHome = 'mahasiswa/home';
+
+final dosenRoutes = <RouteBase>[
+  GoRoute(
+    path: "/dosen/home",
+    name: routeDosenHome,
+    builder: (context, state) => const dosen.HomePage(),
+  ),
+  GoRoute(
+    path: "/dosen/group/form",
+    name: routeDosenGroupForm,
+    builder: (context, state) => const dosen.GroupFormPage(),
+  ),
+];
+
+final mahasiswaRoutes = <RouteBase>[
+  GoRoute(
+    path: "/mahasiswa/home",
+    name: routeMahasiswaHome,
+    builder: (context, state) => const mahasiswa.HomePage(),
+  ),
+];
 
 final routerConfig = GoRouter(
   initialLocation: "/splash",
@@ -35,15 +57,7 @@ final routerConfig = GoRouter(
       name: routeRegister,
       builder: (context, state) => const RegisterPage(),
     ),
-    GoRoute(
-      path: "/dosen/home",
-      name: routeHomeDosen,
-      builder: (context, state) => const dosen.HomePage(),
-    ),
-    GoRoute(
-      path: "/mahasiswa/home",
-      name: routeHomeMahasiswa,
-      builder: (context, state) => const mahasiswa.HomePage(),
-    ),
+    ...dosenRoutes,
+    ...mahasiswaRoutes,
   ],
 );
