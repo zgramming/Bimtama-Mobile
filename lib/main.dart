@@ -1,7 +1,5 @@
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'src/app.dart';
 
 // factory AuthenticationResponseModel.fromJson(Map<String, dynamic> json) =>
 //     _$AuthenticationResponseModelFromJson(json);
