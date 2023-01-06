@@ -29,6 +29,10 @@ final lectureScheduleMeetingNotifier =
         (ref) => ScheduleMeetingNotifier(
             repository: ref.watch(_lectureScheduleMeetingRepository)));
 
+final lectureProfileNotifier =
+    StateNotifierProvider<ProfileNotifier, ProfileState>((ref) =>
+        ProfileNotifier(repository: ref.watch(_lectureProfileRepository)));
+
 //! Start Repository
 final _authenticationRepository = Provider((ref) => AuthenticationRepository(
     remoteDatasource: ref.watch(_authenticationRemoteDatasource)));
@@ -39,6 +43,9 @@ final _lectureGroupRepository = Provider((ref) => GroupRepository(
 final _lectureScheduleMeetingRepository = Provider((ref) =>
     ScheduleMeetingRepository(
         remoteDatasource: ref.watch(_lectureScheduleMeetingRemoteDatasource)));
+
+final _lectureProfileRepository = Provider((ref) => ProfileRepository(
+    remoteDatasource: ref.watch(_lectureProfileRemoteDatasource)));
 
 //! Start Datasource
 final _authenticationRemoteDatasource = Provider(
@@ -52,6 +59,10 @@ final _lectureScheduleMeetingRemoteDatasource = Provider(
   (ref) => ScheduleMeetingRemoteDatasource(
     dio: ref.watch(dioClient),
   ),
+);
+
+final _lectureProfileRemoteDatasource = Provider(
+  (ref) => ProfileRemoteDatasource(dio: ref.watch(dioClient)),
 );
 
 final dioClient = Provider((ref) {
