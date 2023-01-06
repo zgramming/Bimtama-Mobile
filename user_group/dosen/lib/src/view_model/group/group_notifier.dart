@@ -126,6 +126,11 @@ final getActiveGroupMember = AutoDisposeFutureProvider((ref) async {
   final response = LectureActiveGroupMemberModel.fromJson(
     Map<String, dynamic>.from(request.data),
   );
+
+  if (!response.success) {
+    throw response.message;
+  }
+
   return response;
 });
 

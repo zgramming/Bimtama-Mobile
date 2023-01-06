@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'group/group_page.dart';
 import 'guidance/guidance_page.dart';
-import 'schedule_meeting/schedule_meeting.dart';
+import 'schedule_meeting/schedule_meeting_page.dart';
 import 'setting/setting_page.dart';
 
 class HomePage extends StatefulWidget {

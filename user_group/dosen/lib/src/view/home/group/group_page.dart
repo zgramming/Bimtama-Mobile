@@ -215,8 +215,10 @@ class GroupPage extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () =>
-              context.pushNamed(routeDosenGroupForm, params: {'id': "0"}),
+          onPressed: () => context.pushNamed(
+            routeDosenGroupForm,
+            params: {'id': "0"},
+          ),
           child: const Icon(Icons.add),
         ),
       ),
