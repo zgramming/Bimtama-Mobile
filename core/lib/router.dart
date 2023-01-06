@@ -14,6 +14,7 @@ const routeSplash = 'splash';
 /// Dosen
 const routeDosenHome = 'dosen/home';
 const routeDosenGroupForm = 'dosen/group/form';
+const routeDosenScheduleMeetingForm = 'dosen/schedule-meeting/form';
 
 /// Mahasiswa
 const routeMahasiswaHome = 'mahasiswa/home';
@@ -29,8 +30,18 @@ final dosenRoutes = <RouteBase>[
     name: routeDosenGroupForm,
     builder: (context, state) {
       final id = state.params['id'] ?? "0";
-      return dosen.GroupFormPage(
+      return dosen.GroupFormPage(id: id.isEmpty ? 0 : int.parse(id));
+    },
+  ),
+  GoRoute(
+    path: "/dosen/schedule-meeting/form/type/:type/:id",
+    name: routeDosenScheduleMeetingForm,
+    builder: (context, state) {
+      final id = state.params['id'] ?? "0";
+      final type = state.params['type'] ?? "group";
+      return dosen.ScheduleMeetingGroupFormPage(
         id: id.isEmpty ? 0 : int.parse(id),
+        type: type,
       );
     },
   ),

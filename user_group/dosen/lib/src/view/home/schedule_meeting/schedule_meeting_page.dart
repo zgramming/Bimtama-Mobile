@@ -3,18 +3,20 @@ import 'package:dosen/dosen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../model/model/lecture_schedule_meeting_model.dart';
+
 class _TypeScheduleMeeting {
-  final String code;
+  final String type;
   final String name;
   _TypeScheduleMeeting({
-    required this.code,
+    required this.type,
     required this.name,
   });
 }
 
 final _typeScheduleMeeting = <_TypeScheduleMeeting>[
-  _TypeScheduleMeeting(code: "group", name: "Kelompok"),
-  _TypeScheduleMeeting(code: "personal", name: "Personal"),
+  _TypeScheduleMeeting(type: "group", name: "Kelompok"),
+  _TypeScheduleMeeting(type: "personal", name: "Personal"),
 ];
 
 class _Date extends StatelessWidget {
@@ -222,7 +224,15 @@ class _ScheduleMeetingItem extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  context.pushNamed(
+                    routeDosenScheduleMeetingForm,
+                    params: {
+                      "id": "${item.id}",
+                      "type": item.type,
+                    },
+                  );
+                },
                 style: elevatedButtonStyle(padding: const EdgeInsets.all(12.0)),
                 icon: const Icon(Icons.edit_rounded, size: 14.0),
                 label: Text(
@@ -242,14 +252,14 @@ class _ScheduleMeetingItem extends StatelessWidget {
 class TabBarViewItem extends ConsumerWidget {
   const TabBarViewItem({
     Key? key,
-    required this.code,
+    required this.type,
   }) : super(key: key);
 
-  final String code;
+  final String type;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final future = ref.watch(getScheduleMeetingByCode(code));
+    final future = ref.watch(getScheduleMeetingByType(type));
     return future.when(
       data: (response) {
         final items = response.data;
@@ -257,19 +267,50 @@ class TabBarViewItem extends ConsumerWidget {
           return const Center(child: Text("Tidak ada jadwal pertemuan"));
         }
 
-        return ListView.separated(
-          padding: const EdgeInsets.all(16.0),
-          itemCount: items.length,
-          shrinkWrap: true,
-          separatorBuilder: (context, index) => const Divider(),
-          itemBuilder: (context, index) {
-            final item = items[index];
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            ListView.separated(
+              padding: const EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
+                top: 16.0,
+                bottom: 60.0,
+              ),
+              itemCount: items.length,
+              shrinkWrap: true,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final item = items[index];
 
-            return _ScheduleMeetingItem(
-              item: item,
-              index: index,
-            );
-          },
+                return _ScheduleMeetingItem(
+                  item: item,
+                  index: index,
+                );
+              },
+            ),
+            Positioned(
+              bottom: 15,
+              right: 15,
+              child: InkWell(
+                onTap: () async {
+                  context.pushNamed(
+                    routeDosenScheduleMeetingForm,
+                    params: {
+                      "id": "0",
+                      "type": type,
+                    },
+                  );
+                },
+                child: const CircleAvatar(
+                  backgroundColor: secondary,
+                  foregroundColor: Colors.white,
+                  radius: 30,
+                  child: Icon(Icons.add, size: 30.0),
+                ),
+              ),
+            )
+          ],
         );
       },
       error: (error, stackTrace) => Center(child: Text("$error")),
@@ -319,11 +360,7 @@ class _ScheduleMeetingPageState extends State<ScheduleMeetingPage>
                 ),
               ),
               tabs: _typeScheduleMeeting
-                  .map(
-                    (e) => Tab(
-                      text: e.name.toUpperCase(),
-                    ),
-                  )
+                  .map((e) => Tab(text: e.name.toUpperCase()))
                   .toList(),
               onTap: (value) => '',
             ),
@@ -333,7 +370,7 @@ class _ScheduleMeetingPageState extends State<ScheduleMeetingPage>
               controller: _controller,
               children: _typeScheduleMeeting
                   .map(
-                    (e) => TabBarViewItem(code: e.code),
+                    (e) => TabBarViewItem(type: e.type),
                   )
                   .toList(),
             ),

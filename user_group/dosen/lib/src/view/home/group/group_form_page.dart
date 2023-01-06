@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
-import '../../../model/model.dart';
+import '../../../model/model/group_create_response_model.dart';
+import '../../../model/model/group_update_response_model.dart';
+import '../../../model/model/lecture_active_group_detail_model.dart';
 import '../../../view_model/group/group_notifier.dart';
 
 const _informations = [
@@ -179,121 +181,131 @@ class _GroupFormPageState extends ConsumerState<GroupFormPage> {
         appBar: AppBar(
           title: Text("Form Kelompok ${row.data?.name ?? ""}"),
         ),
-        body: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const _Info(),
-                      const SizedBox(height: 24.0),
-                      FormBody(
-                        title: "Nama",
-                        child: TextFormField(
-                          controller: nameController,
-                          decoration: inputDecorationRounded().copyWith(
-                            hintText: "Masukkan Nama",
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const _Info(),
+                        const SizedBox(height: 24.0),
+                        FormBody(
+                          title: "Nama",
+                          child: TextFormField(
+                            controller: nameController,
+                            decoration: inputDecorationRounded().copyWith(
+                              hintText: "Masukkan Nama",
+                            ),
+                            validator: (value) {
+                              if (value == null || value == "") {
+                                return "Nama tidak boleh kosong";
+                              }
+                              return null;
+                            },
+                            onChanged: (value) {
+                              final slug = stringToSlug(value);
+                              codeController.text = slug;
+                            },
                           ),
-                          validator: (value) {
-                            if (value == null || value == "") {
-                              return "Nama tidak boleh kosong";
-                            }
-                            return null;
-                          },
-                          onChanged: (value) {
-                            final slug = stringToSlug(value);
-                            codeController.text = slug;
-                          },
                         ),
-                      ),
-                      const SizedBox(height: 24.0),
-                      FormBody(
-                        title: "Kode",
-                        child: TextFormField(
-                          controller: codeController,
-                          readOnly: true,
-                          decoration: inputDecorationRounded().copyWith(
-                            hintText: "Masukkan Kode",
-                            helperText: "Readonly",
+                        const SizedBox(height: 24.0),
+                        FormBody(
+                          title: "Kode",
+                          child: TextFormField(
+                            controller: codeController,
+                            readOnly: true,
+                            decoration: inputDecorationRounded().copyWith(
+                              hintText: "Masukkan Kode",
+                              helperText: "Readonly",
+                            ),
+                            validator: (value) {
+                              if (value == null || value == "") {
+                                return "Kode tidak boleh kosong";
+                              }
+                              return null;
+                            },
                           ),
-                          validator: (value) {
-                            if (value == null || value == "") {
-                              return "Kode tidak boleh kosong";
-                            }
-                            return null;
-                          },
                         ),
-                      ),
-                      const SizedBox(height: 24.0),
-                      FormBody(
-                        title: "Deskripsi",
-                        child: TextFormField(
-                          controller: descriptionController,
-                          minLines: 5,
-                          maxLines: 5,
-                          decoration: inputDecorationRounded().copyWith(
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 16.0, horizontal: 8.0),
+                        const SizedBox(height: 24.0),
+                        FormBody(
+                          title: "Deskripsi",
+                          child: TextFormField(
+                            controller: descriptionController,
+                            minLines: 5,
+                            maxLines: 5,
+                            decoration: inputDecorationRounded().copyWith(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 16.0, horizontal: 8.0),
+                            ),
+                            validator: (value) {
+                              if (value == null || value == "") {
+                                return "Deskripsi tidak boleh kosong";
+                              }
+                              return null;
+                            },
                           ),
-                          validator: (value) {
-                            if (value == null || value == "") {
-                              return "Deskripsi tidak boleh kosong";
-                            }
-                            return null;
-                          },
                         ),
-                      ),
-                      const SizedBox(height: 24.0),
-                    ],
+                        const SizedBox(height: 24.0),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () async {
-                final validate = _formKey.currentState?.validate() ?? false;
-                if (!validate) return;
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  final validate = _formKey.currentState?.validate() ?? false;
+                  if (!validate) {
+                    showSnackbar(
+                      context,
+                      text: const Text("Validation Error"),
+                      color: Colors.red,
+                    );
+                    return;
+                  }
 
-                final id = widget.id;
-                final user = ref.read(userNotifier).item;
-                final token = user?.token ?? "";
+                  final id = widget.id;
+                  final user = ref.read(userNotifier).item;
+                  final token = user?.token ?? "";
 
-                if (id == 0) {
-                  /// create
-                  await ref.read(lectureGroupNotifier.notifier).create(
-                        token,
-                        name: nameController.text,
-                        code: codeController.text,
-                        description: descriptionController.text,
-                        createdBy: user?.data.id ?? 0,
-                      );
-                } else {
-                  /// update
-                  await ref.read(lectureGroupNotifier.notifier).update(
-                        token,
-                        id: id,
-                        name: nameController.text,
-                        code: codeController.text,
-                        description: descriptionController.text,
-                        createdBy: user?.data.id ?? 0,
-                      );
-                }
-              },
-              style: elevatedButtonStyle(),
-              child: Text(
-                "Simpan",
-                style: bodyFontWhite.copyWith(fontSize: 16.0),
+                  if (id == 0) {
+                    /// create
+                    await ref.read(lectureGroupNotifier.notifier).create(
+                          token,
+                          name: nameController.text,
+                          code: codeController.text,
+                          description: descriptionController.text,
+                          createdBy: user?.data.id ?? 0,
+                        );
+                  } else {
+                    /// update
+                    await ref.read(lectureGroupNotifier.notifier).update(
+                          token,
+                          id: id,
+                          name: nameController.text,
+                          code: codeController.text,
+                          description: descriptionController.text,
+                          createdBy: user?.data.id ?? 0,
+                        );
+                  }
+                },
+                style: elevatedButtonStyle(),
+                child: Text(
+                  "Simpan",
+                  style: bodyFontWhite.copyWith(fontSize: 16.0),
+                ),
               ),
             ),
-          )
-        ]),
+          ],
+        ),
       ),
       error: (error, stackTrace) =>
           Scaffold(body: Center(child: Text("$error"))),

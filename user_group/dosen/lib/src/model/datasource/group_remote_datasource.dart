@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:core/core.dart';
 
 import '../model/group_create_response_model.dart';
@@ -73,8 +71,6 @@ class GroupRemoteDatasource {
         },
       ),
     );
-
-    log("requst $request");
 
     final response = GroupUpdateResponseModel.fromJson(
       Map<String, dynamic>.from(request.data),

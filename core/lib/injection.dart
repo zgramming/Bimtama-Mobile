@@ -6,6 +6,7 @@ import 'src/model/datasource/authentication_remote_datasource.dart';
 import 'src/utils/constant.dart';
 import 'src/view_model/user/user_notifier.dart';
 
+//! Start Notifier
 final userNotifier = StateNotifierProvider<UserNotifier, UserState>(
   (ref) => UserNotifier(),
 );
@@ -23,18 +24,35 @@ final lectureGroupNotifier = StateNotifierProvider<GroupNotifier, GroupState>(
   ),
 );
 
+final lectureScheduleMeetingNotifier =
+    StateNotifierProvider<ScheduleMeetingNotifier, ScheduleMeetingState>(
+        (ref) => ScheduleMeetingNotifier(
+            repository: ref.watch(_lectureScheduleMeetingRepository)));
+
+//! Start Repository
 final _authenticationRepository = Provider((ref) => AuthenticationRepository(
     remoteDatasource: ref.watch(_authenticationRemoteDatasource)));
 
 final _lectureGroupRepository = Provider((ref) => GroupRepository(
     remoteDatasource: ref.watch(_lectureGroupRemoteDatasource)));
 
+final _lectureScheduleMeetingRepository = Provider((ref) =>
+    ScheduleMeetingRepository(
+        remoteDatasource: ref.watch(_lectureScheduleMeetingRemoteDatasource)));
+
+//! Start Datasource
 final _authenticationRemoteDatasource = Provider(
   (ref) => AuthenticationRemoteDatasource(dio: ref.watch(dioClient)),
 );
 
 final _lectureGroupRemoteDatasource =
     Provider((ref) => GroupRemoteDatasource(dio: ref.watch(dioClient)));
+
+final _lectureScheduleMeetingRemoteDatasource = Provider(
+  (ref) => ScheduleMeetingRemoteDatasource(
+    dio: ref.watch(dioClient),
+  ),
+);
 
 final dioClient = Provider((ref) {
   final options = BaseOptions(
