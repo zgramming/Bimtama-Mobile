@@ -1,13 +1,15 @@
 import 'package:core/core.dart';
 
+import '../model/group_active_update_response_model.dart';
 import '../model/group_create_response_model.dart';
 import '../model/group_update_response_model.dart';
 
 class GroupRemoteDatasource {
-  final Dio dio;
   const GroupRemoteDatasource({
     required this.dio,
   });
+
+  final Dio dio;
 
   Future<GroupCreateResponseModel> create(
     String token, {
@@ -74,6 +76,37 @@ class GroupRemoteDatasource {
 
     final response = GroupUpdateResponseModel.fromJson(
       Map<String, dynamic>.from(request.data),
+    );
+
+    if (!response.success) {
+      if (response.message is List) {
+        throw ValidationFailure(response.message);
+      }
+      throw Exception(response.message);
+    }
+
+    return response;
+  }
+
+  Future<GroupActiveUpdateResponseModel> updateActiveGroup(
+    String token, {
+    required int userId,
+    required int groupId,
+  }) async {
+    final data = FormData.fromMap({'group_id': groupId});
+
+    final request = await dio.put(
+      "/dosen/my-group/$userId",
+      data: data,
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    final response = GroupActiveUpdateResponseModel.fromJson(
+      Map.from(request.data),
     );
 
     if (!response.success) {

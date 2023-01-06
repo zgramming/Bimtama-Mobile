@@ -1,6 +1,7 @@
 import 'package:core/core.dart';
 
 import '../datasource/group_remote_datasource.dart';
+import '../model/group_active_update_response_model.dart';
 import '../model/group_create_response_model.dart';
 import '../model/group_update_response_model.dart';
 
@@ -47,6 +48,23 @@ class GroupRepository {
         code: code,
         description: description,
         createdBy: createdBy,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(CommonFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, GroupActiveUpdateResponseModel>> updateActiveGroup(
+    String token, {
+    required int userId,
+    required int groupId,
+  }) async {
+    try {
+      final result = await remoteDatasource.updateActiveGroup(
+        token,
+        userId: userId,
+        groupId: groupId,
       );
       return Right(result);
     } catch (e) {

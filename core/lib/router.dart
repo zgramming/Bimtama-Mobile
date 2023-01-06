@@ -15,6 +15,8 @@ const routeSplash = 'splash';
 const routeDosenHome = 'dosen/home';
 const routeDosenGroupForm = 'dosen/group/form';
 const routeDosenScheduleMeetingForm = 'dosen/schedule-meeting/form';
+const routeDosenSettingActiveGroup = 'dosen/setting/active-group';
+const routeDosenSettingProfile = 'dosen/setting/profile';
 
 /// Mahasiswa
 const routeMahasiswaHome = 'mahasiswa/home';
@@ -44,6 +46,16 @@ final dosenRoutes = <RouteBase>[
         type: type,
       );
     },
+  ),
+  GoRoute(
+    path: "/dosen/setting/active-group",
+    name: routeDosenSettingActiveGroup,
+    builder: (context, state) => const dosen.SettingActiveGroupPage(),
+  ),
+  GoRoute(
+    path: "/dosen/setting/profile",
+    name: routeDosenSettingProfile,
+    builder: (context, state) => const dosen.SettingProfilePage(),
   ),
 ];
 
