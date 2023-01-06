@@ -1,11 +1,11 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
-class SettingPage extends StatelessWidget {
+class SettingPage extends ConsumerWidget {
   const SettingPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -84,7 +84,11 @@ class SettingPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton.icon(
-              onPressed: () => '',
+              onPressed: () async {
+                ref.read(userNotifier.notifier).unsetUser().then((value) {
+                  context.goNamed(routeSplash);
+                });
+              },
               style: elevatedButtonStyle(backgroundColor: Colors.red),
               icon: const Icon(Icons.logout),
               label: Text(
