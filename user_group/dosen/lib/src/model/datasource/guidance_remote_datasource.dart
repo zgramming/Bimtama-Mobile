@@ -29,6 +29,9 @@ class GuidanceRepository {
 //   }) : super(const GuidanceState());
 // }
 
+final selectedFilterGuidanceState =
+    StateProvider((ref) => GuidanceStatus.progress);
+
 final getGuidanceMasterOutline =
     AutoDisposeFutureProvider<LectureGuidanceMasterOutlineModel>(
   (ref) async {
@@ -59,9 +62,13 @@ final getGuidanceDetailByCodeOutlineComponent = AutoDisposeFutureProviderFamily(
     final dio = ref.watch(dioClient);
     final user = ref.watch(userNotifier).item;
     final userId = user?.data.id;
+    final selectedFilter = ref.watch(selectedFilterGuidanceState);
 
     final request = await dio.get(
       "/dosen/guidance/detail/$userId/code-master-outline-component/$codeMasterOutlineComponent",
+      queryParameters: {
+        "status": selectedFilter.name,
+      },
       options: Options(
         headers: {"Authorization": "Bearer ${user?.token}"},
       ),

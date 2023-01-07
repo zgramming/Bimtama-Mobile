@@ -1,7 +1,10 @@
-import 'package:core/src/model/model/user_model.dart';
-import 'package:flutter/material.dart';
+import 'dart:developer';
 
-import 'constant.dart';
+import 'package:core/core.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'package:path/path.dart' as p;
 
 void showSnackbar(
   BuildContext context, {
@@ -109,4 +112,25 @@ Future<DateTime?> showDateTimePicker(
   }
 
   return null;
+}
+
+Future<String> downloadFile(String url) async {
+  final dio = Dio();
+  const uuid = Uuid();
+  final ext = p.extension(url);
+  final tempDir = await getTemporaryDirectory();
+  final path = "${tempDir.path}/${uuid.v4()}$ext";
+
+  await dio.download(
+    url,
+    path,
+    onReceiveProgress: (count, total) {},
+  );
+
+  final open = await OpenFile.open(path);
+  if (open.type != ResultType.done) {
+    throw Exception(open.message);
+  }
+
+  return open.message;
 }

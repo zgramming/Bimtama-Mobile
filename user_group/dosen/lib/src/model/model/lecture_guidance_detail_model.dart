@@ -3,6 +3,15 @@ import 'package:flutter/cupertino.dart';
 
 part 'lecture_guidance_detail_model.g.dart';
 
+enum GuidanceStatus {
+  @JsonValue("approved")
+  approved,
+  @JsonValue("rejected")
+  rejected,
+  @JsonValue("progress")
+  progress
+}
+
 @JsonSerializable(fieldRename: FieldRename.snake)
 @immutable
 class LectureGuidanceDetailDetailModel extends Equatable {
@@ -41,7 +50,7 @@ class LectureGuidanceDetailDetailData extends Equatable {
     this.title,
     this.description,
     this.lectureNote,
-    this.status,
+    this.status = GuidanceStatus.progress,
     this.file,
     this.fileLecture,
     this.createdAt,
@@ -59,7 +68,7 @@ class LectureGuidanceDetailDetailData extends Equatable {
   final String? title;
   final String? description;
   final String? lectureNote;
-  final String? status;
+  final GuidanceStatus status;
   final String? file;
   final String? fileLecture;
   final DateTime? createdAt;

@@ -6,6 +6,93 @@ import 'package:flutter/material.dart';
 import '../../../model/model/lecture_guidance_detail_model.dart';
 import '../../../model/model/lecture_guidance_master_outline_model.dart';
 
+class _FilterPage extends ConsumerWidget {
+  const _FilterPage({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedFilter = ref.watch(selectedFilterGuidanceState);
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FormBody(
+            title: "Status",
+            child: DropdownButtonFormField<GuidanceStatus>(
+              value: selectedFilter,
+              decoration: inputDecorationRounded(),
+              items: GuidanceStatus.values
+                  .map((e) => DropdownMenuItem(
+                      value: e, child: Text(e.name.toUpperCase())))
+                  .toList(),
+              onChanged: (value) {
+                ref
+                    .read(selectedFilterGuidanceState.notifier)
+                    .update((state) => value ?? GuidanceStatus.progress);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ButtonDownloadFile extends StatefulWidget {
+  const _ButtonDownloadFile({
+    Key? key,
+    required this.file,
+  }) : super(key: key);
+
+  final String file;
+
+  @override
+  State<_ButtonDownloadFile> createState() => _ButtonDownloadFileState();
+}
+
+class _ButtonDownloadFileState extends State<_ButtonDownloadFile> {
+  bool isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: isLoading
+            ? const CircularProgressIndicator()
+            : OutlinedButton.icon(
+                onPressed: () async {
+                  try {
+                    setState(() => isLoading = true);
+                    final url = "$baseFileDirectoryURL/${widget.file}";
+                    final message = await downloadFile(url);
+                    if (!mounted) return;
+                    showSnackbar(
+                      context,
+                      text: Text(message),
+                      color: Colors.green,
+                    );
+                  } catch (e) {
+                    showSnackbar(
+                      context,
+                      text: Text("$e"),
+                      color: Colors.red,
+                    );
+                  } finally {
+                    setState(() => isLoading = false);
+                  }
+                },
+                icon: const Icon(Icons.file_download),
+                label: const Text("Lihat File"),
+              ),
+      ),
+    );
+  }
+}
+
 class _GuidanceDetailItem extends StatelessWidget {
   const _GuidanceDetailItem({
     Key? key,
@@ -19,6 +106,9 @@ class _GuidanceDetailItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isUserAttachFile =
         guidance.file != null && (guidance.file?.isNotEmpty ?? false);
+    final isApproved = guidance.status == GuidanceStatus.approved;
+    final isRejected = guidance.status == GuidanceStatus.rejected;
+    // final isProgress = guidance.status == GuidanceStatus.progress;
     return ListTile(
       contentPadding: const EdgeInsets.only(),
       title: Text(
@@ -36,22 +126,17 @@ class _GuidanceDetailItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (isUserAttachFile) ...[
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: OutlinedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.file_download),
-                        label: const Text("Lihat File"),
-                      ),
-                    ),
-                  ),
+                  _ButtonDownloadFile(file: guidance.file ?? ""),
                 ],
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Card(
-                      color: Colors.green,
+                      color: isApproved
+                          ? Colors.green
+                          : isRejected
+                              ? Colors.red
+                              : Colors.blue,
                       margin: const EdgeInsets.only(),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(60.0),
@@ -59,7 +144,7 @@ class _GuidanceDetailItem extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "${guidance.status}",
+                          guidance.status.name.toUpperCase(),
                           style: bodyFontWhite.copyWith(fontSize: 12.0),
                         ),
                       ),
@@ -94,20 +179,29 @@ class _TabBarViewItem extends ConsumerWidget {
         return Stack(
           fit: StackFit.expand,
           children: [
-            ListView.separated(
-              padding: const EdgeInsets.only(
-                left: 16.0,
-                right: 16.0,
-                top: 16.0,
-                bottom: 40.0,
-              ),
-              itemCount: items.length,
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                final item = items[index];
-                return _GuidanceDetailItem(
-                  guidance: item,
-                  index: index,
+            Builder(
+              builder: (context) {
+                if (items.isEmpty) {
+                  return const Center(
+                    child: Text("Bimbingan Tidak Ditemukan"),
+                  );
+                }
+                return ListView.separated(
+                  padding: const EdgeInsets.only(
+                    left: 16.0,
+                    right: 16.0,
+                    top: 16.0,
+                    bottom: 40.0,
+                  ),
+                  itemCount: items.length,
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return _GuidanceDetailItem(
+                      guidance: item,
+                      index: index,
+                    );
+                  },
                 );
               },
             ),
@@ -118,7 +212,12 @@ class _TabBarViewItem extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 120.0),
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () async {
+                    await showModalBottomSheet(
+                      context: context,
+                      builder: (context) => const _FilterPage(),
+                    );
+                  },
                   icon: const Icon(Icons.filter_alt_rounded),
                   style:
                       elevatedButtonStyle(radius: BorderRadius.circular(60.0)),

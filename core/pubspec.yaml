@@ -24,11 +24,13 @@ dependencies:
   json_annotation: ^4.7.0
   mahasiswa:
     path: ../user_group/mahasiswa
+  open_file: ^3.2.1
   path: ^1.8.2
   path_provider: ^2.0.11
   persistent_bottom_nav_bar: ^5.0.2
   shared_preferences: ^2.0.15
   url_launcher: ^6.1.7
+  uuid: ^3.0.7
 
 dev_dependencies:
   build_runner: ^2.3.3

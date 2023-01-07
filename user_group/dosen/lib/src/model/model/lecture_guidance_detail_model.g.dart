@@ -37,7 +37,8 @@ LectureGuidanceDetailDetailData _$LectureGuidanceDetailDetailDataFromJson(
       title: json['title'] as String?,
       description: json['description'] as String?,
       lectureNote: json['lecture_note'] as String?,
-      status: json['status'] as String?,
+      status: $enumDecodeNullable(_$GuidanceStatusEnumMap, json['status']) ??
+          GuidanceStatus.progress,
       file: json['file'] as String?,
       fileLecture: json['file_lecture'] as String?,
       createdAt: json['created_at'] == null
@@ -64,7 +65,7 @@ Map<String, dynamic> _$LectureGuidanceDetailDetailDataToJson(
       'title': instance.title,
       'description': instance.description,
       'lecture_note': instance.lectureNote,
-      'status': instance.status,
+      'status': _$GuidanceStatusEnumMap[instance.status]!,
       'file': instance.file,
       'file_lecture': instance.fileLecture,
       'created_at': instance.createdAt?.toIso8601String(),
@@ -73,6 +74,12 @@ Map<String, dynamic> _$LectureGuidanceDetailDetailDataToJson(
       'updated_by': instance.updatedBy,
       'user': instance.user,
     };
+
+const _$GuidanceStatusEnumMap = {
+  GuidanceStatus.approved: 'approved',
+  GuidanceStatus.rejected: 'rejected',
+  GuidanceStatus.progress: 'progress',
+};
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
       id: json['id'] as int?,
