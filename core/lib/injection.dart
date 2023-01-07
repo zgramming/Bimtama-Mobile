@@ -33,6 +33,10 @@ final lectureProfileNotifier =
     StateNotifierProvider<ProfileNotifier, ProfileState>((ref) =>
         ProfileNotifier(repository: ref.watch(_lectureProfileRepository)));
 
+final lectureGuidanceNotifier =
+    StateNotifierProvider<GuidanceNotifier, GuidanceState>((ref) =>
+        GuidanceNotifier(repository: ref.watch(_lectureGuidanceRepositoru)));
+
 //! Start Repository
 final _authenticationRepository = Provider((ref) => AuthenticationRepository(
     remoteDatasource: ref.watch(_authenticationRemoteDatasource)));
@@ -46,6 +50,9 @@ final _lectureScheduleMeetingRepository = Provider((ref) =>
 
 final _lectureProfileRepository = Provider((ref) => ProfileRepository(
     remoteDatasource: ref.watch(_lectureProfileRemoteDatasource)));
+
+final _lectureGuidanceRepositoru = Provider((ref) => GuidanceRepository(
+    remoteDatasource: ref.watch(_lectureGuidanceRemoteDatasource)));
 
 //! Start Datasource
 final _authenticationRemoteDatasource = Provider(
@@ -65,6 +72,11 @@ final _lectureProfileRemoteDatasource = Provider(
   (ref) => ProfileRemoteDatasource(dio: ref.watch(dioClient)),
 );
 
+final _lectureGuidanceRemoteDatasource = Provider(
+  (ref) => GuidanceRemoteDatasource(dio: ref.watch(dioClient)),
+);
+
+//! Start Utils
 final dioClient = Provider((ref) {
   final options = BaseOptions(
     baseUrl: baseAPIURL,

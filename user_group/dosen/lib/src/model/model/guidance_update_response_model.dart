@@ -1,26 +1,24 @@
 import 'package:core/core.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'lecture_guidance_detail_outline_model.dart';
-
-part 'lecture_guidance_detail_model.g.dart';
+part 'guidance_update_response_model.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 @immutable
-class LectureGuidanceDetailModel extends Equatable {
-  const LectureGuidanceDetailModel({
+class GuidanceUpdateResponseModel extends Equatable {
+  const GuidanceUpdateResponseModel({
     required this.success,
     required this.message,
     this.data,
   });
 
   final bool success;
-  final String message;
-  final LectureGuidanceDetailData? data;
+  final dynamic message;
+  final GuidanceUpdateResponseData? data;
 
-  factory LectureGuidanceDetailModel.fromJson(Map<String, dynamic> json) =>
-      _$LectureGuidanceDetailModelFromJson(json);
-  Map<String, dynamic> toJson() => _$LectureGuidanceDetailModelToJson(this);
+  factory GuidanceUpdateResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$GuidanceUpdateResponseModelFromJson(json);
+  Map<String, dynamic> toJson() => _$GuidanceUpdateResponseModelToJson(this);
 
   @override
   List<Object?> get props => [success, message, data];
@@ -31,8 +29,8 @@ class LectureGuidanceDetailModel extends Equatable {
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 @immutable
-class LectureGuidanceDetailData extends Equatable {
-  const LectureGuidanceDetailData({
+class GuidanceUpdateResponseData extends Equatable {
+  const GuidanceUpdateResponseData({
     this.id,
     this.guidanceId,
     this.userId,
@@ -41,15 +39,15 @@ class LectureGuidanceDetailData extends Equatable {
     this.title,
     this.description,
     this.lectureNote,
-    this.status = GuidanceStatus.progress,
+    this.status,
     this.file,
     this.fileLecture,
     this.createdAt,
     this.updatedAt,
-    this.createdBy,
-    this.updatedBy,
-    this.user,
+    required this.createdBy,
+    required this.updatedBy,
   });
+
   final String? id;
   final int? guidanceId;
   final int? userId;
@@ -58,18 +56,17 @@ class LectureGuidanceDetailData extends Equatable {
   final String? title;
   final String? description;
   final String? lectureNote;
-  final GuidanceStatus status;
+  final String? status;
   final String? file;
   final String? fileLecture;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final int? createdBy;
   final int? updatedBy;
-  final User? user;
 
-  factory LectureGuidanceDetailData.fromJson(Map<String, dynamic> json) =>
-      _$LectureGuidanceDetailDataFromJson(json);
-  Map<String, dynamic> toJson() => _$LectureGuidanceDetailDataToJson(this);
+  factory GuidanceUpdateResponseData.fromJson(Map<String, dynamic> json) =>
+      _$GuidanceUpdateResponseDataFromJson(json);
+  Map<String, dynamic> toJson() => _$GuidanceUpdateResponseDataToJson(this);
 
   @override
   List<Object?> get props {
@@ -89,30 +86,8 @@ class LectureGuidanceDetailData extends Equatable {
       updatedAt,
       createdBy,
       updatedBy,
-      user,
     ];
   }
-
-  @override
-  bool get stringify => true;
-}
-
-@JsonSerializable(fieldRename: FieldRename.snake)
-@immutable
-class User extends Equatable {
-  const User({
-    this.id,
-    this.name,
-  });
-
-  final int? id;
-  final String? name;
-
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
-  Map<String, dynamic> toJson() => _$UserToJson(this);
-
-  @override
-  List<Object?> get props => [id, name];
 
   @override
   bool get stringify => true;

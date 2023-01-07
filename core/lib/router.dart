@@ -17,6 +17,7 @@ const routeDosenGroupForm = 'dosen/group/form';
 const routeDosenScheduleMeetingForm = 'dosen/schedule-meeting/form';
 const routeDosenSettingActiveGroup = 'dosen/setting/active-group';
 const routeDosenSettingProfile = 'dosen/setting/profile';
+const routeDosenGuidanceForm = 'dosen/guidance/form';
 
 /// Mahasiswa
 const routeMahasiswaHome = 'mahasiswa/home';
@@ -44,6 +45,16 @@ final dosenRoutes = <RouteBase>[
       return dosen.ScheduleMeetingGroupFormPage(
         id: id.isEmpty ? 0 : int.parse(id),
         type: type,
+      );
+    },
+  ),
+  GoRoute(
+    path: "/dosen/guidance/form/:id",
+    name: routeDosenGuidanceForm,
+    builder: (context, state) {
+      final id = state.params['id'] ?? "0";
+      return dosen.GuidanceFormPage(
+        id: id,
       );
     },
   ),

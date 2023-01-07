@@ -1,10 +1,9 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:core/core.dart';
-import 'package:dosen/src/model/datasource/guidance_remote_datasource.dart';
 import 'package:flutter/material.dart';
 
-import '../../../model/model/lecture_guidance_detail_model.dart';
+import '../../../model/model/lecture_guidance_detail_outline_model.dart';
 import '../../../model/model/lecture_guidance_master_outline_model.dart';
+import '../../../view_model/guidance/guidance_notifier.dart';
 
 class _FilterPage extends ConsumerWidget {
   const _FilterPage({
@@ -100,7 +99,7 @@ class _GuidanceDetailItem extends StatelessWidget {
     required this.index,
   }) : super(key: key);
 
-  final LectureGuidanceDetailDetailData guidance;
+  final LectureGuidanceDetailDetailOutlineData guidance;
   final int index;
   @override
   Widget build(BuildContext context) {
@@ -153,6 +152,24 @@ class _GuidanceDetailItem extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 8.0),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  context.pushNamed(
+                    routeDosenGuidanceForm,
+                    params: {
+                      "id": guidance.id ?? "0",
+                    },
+                  );
+                },
+                style: elevatedButtonStyle(padding: const EdgeInsets.all(8.0)),
+                icon: const Icon(Icons.edit),
+                label: const Text("Update"),
+              ),
+            ),
+            const SizedBox(height: 8.0),
           ],
         ),
       ),

@@ -1,33 +1,33 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'lecture_guidance_detail_model.dart';
+part of 'guidance_update_response_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LectureGuidanceDetailModel _$LectureGuidanceDetailModelFromJson(
+GuidanceUpdateResponseModel _$GuidanceUpdateResponseModelFromJson(
         Map<String, dynamic> json) =>
-    LectureGuidanceDetailModel(
+    GuidanceUpdateResponseModel(
       success: json['success'] as bool,
-      message: json['message'] as String,
+      message: json['message'],
       data: json['data'] == null
           ? null
-          : LectureGuidanceDetailData.fromJson(
+          : GuidanceUpdateResponseData.fromJson(
               json['data'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$LectureGuidanceDetailModelToJson(
-        LectureGuidanceDetailModel instance) =>
+Map<String, dynamic> _$GuidanceUpdateResponseModelToJson(
+        GuidanceUpdateResponseModel instance) =>
     <String, dynamic>{
       'success': instance.success,
       'message': instance.message,
       'data': instance.data,
     };
 
-LectureGuidanceDetailData _$LectureGuidanceDetailDataFromJson(
+GuidanceUpdateResponseData _$GuidanceUpdateResponseDataFromJson(
         Map<String, dynamic> json) =>
-    LectureGuidanceDetailData(
+    GuidanceUpdateResponseData(
       id: json['id'] as String?,
       guidanceId: json['guidance_id'] as int?,
       userId: json['user_id'] as int?,
@@ -36,8 +36,7 @@ LectureGuidanceDetailData _$LectureGuidanceDetailDataFromJson(
       title: json['title'] as String?,
       description: json['description'] as String?,
       lectureNote: json['lecture_note'] as String?,
-      status: $enumDecodeNullable(_$GuidanceStatusEnumMap, json['status']) ??
-          GuidanceStatus.progress,
+      status: json['status'] as String?,
       file: json['file'] as String?,
       fileLecture: json['file_lecture'] as String?,
       createdAt: json['created_at'] == null
@@ -48,13 +47,10 @@ LectureGuidanceDetailData _$LectureGuidanceDetailDataFromJson(
           : DateTime.parse(json['updated_at'] as String),
       createdBy: json['created_by'] as int?,
       updatedBy: json['updated_by'] as int?,
-      user: json['user'] == null
-          ? null
-          : User.fromJson(json['user'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$LectureGuidanceDetailDataToJson(
-        LectureGuidanceDetailData instance) =>
+Map<String, dynamic> _$GuidanceUpdateResponseDataToJson(
+        GuidanceUpdateResponseData instance) =>
     <String, dynamic>{
       'id': instance.id,
       'guidance_id': instance.guidanceId,
@@ -64,28 +60,11 @@ Map<String, dynamic> _$LectureGuidanceDetailDataToJson(
       'title': instance.title,
       'description': instance.description,
       'lecture_note': instance.lectureNote,
-      'status': _$GuidanceStatusEnumMap[instance.status]!,
+      'status': instance.status,
       'file': instance.file,
       'file_lecture': instance.fileLecture,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
       'created_by': instance.createdBy,
       'updated_by': instance.updatedBy,
-      'user': instance.user,
-    };
-
-const _$GuidanceStatusEnumMap = {
-  GuidanceStatus.approved: 'approved',
-  GuidanceStatus.rejected: 'rejected',
-  GuidanceStatus.progress: 'progress',
-};
-
-User _$UserFromJson(Map<String, dynamic> json) => User(
-      id: json['id'] as int?,
-      name: json['name'] as String?,
-    );
-
-Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
     };

@@ -1,8 +1,31 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:core/core.dart';
+import 'dart:io';
 
-import '../model/lecture_guidance_detail_model.dart';
-import '../model/lecture_guidance_master_outline_model.dart';
+import 'package:core/core.dart';
+import 'package:dosen/src/model/model/lecture_guidance_detail_outline_model.dart';
+
+import '../model/guidance_update_response_model.dart';
+
+class GuidanceFormModel extends Equatable {
+  const GuidanceFormModel({
+    required this.token,
+    required this.id,
+    required this.lectureNote,
+    required this.status,
+    this.file,
+  });
+
+  final String token;
+  final String id;
+  final String lectureNote;
+  final GuidanceStatus status;
+  final File? file;
+
+  @override
+  List<Object?> get props => [id, lectureNote, status, file];
+
+  @override
+  bool get stringify => true;
+}
 
 class GuidanceRemoteDatasource {
   const GuidanceRemoteDatasource({
@@ -10,77 +33,38 @@ class GuidanceRemoteDatasource {
   });
 
   final Dio dio;
-}
 
-class GuidanceRepository {
-  const GuidanceRepository({
-    required this.remoteDatasource,
-  });
+  Future<GuidanceUpdateResponseModel> update(GuidanceFormModel form) async {
+    final data = FormData.fromMap({
+      "lecture_note": form.lectureNote,
+      "status": form.status,
+      if (form.file != null)
+        "file": await MultipartFile.fromFile(
+          form.file?.path ?? "",
+        )
+    });
 
-  final GuidanceRemoteDatasource remoteDatasource;
-}
-
-// class GuidanceState extends Equatable {}
-
-// class GuidanceNotifier extends StateNotifier<GuidanceState> {
-//   final GuidanceRepository repository;
-//   GuidanceNotifier({
-//     required this.repository,
-//   }) : super(const GuidanceState());
-// }
-
-final selectedFilterGuidanceState =
-    StateProvider((ref) => GuidanceStatus.progress);
-
-final getGuidanceMasterOutline =
-    AutoDisposeFutureProvider<LectureGuidanceMasterOutlineModel>(
-  (ref) async {
-    final dio = ref.watch(dioClient);
-    final user = ref.watch(userNotifier).item;
-
-    final request = await dio.get(
-      "/dosen/guidance/master-outline-component/${user?.data.id}",
+    final request = await dio.put(
+      "/dosen/guidance/detail/submission/${form.id}",
+      data: data,
       options: Options(
-        headers: {"Authorization": "Bearer ${user?.token}"},
+        headers: {
+          "Authorization": "Bearer ${form.token}",
+        },
       ),
     );
 
-    final response = LectureGuidanceMasterOutlineModel.fromJson(
+    final response = GuidanceUpdateResponseModel.fromJson(
       Map<String, dynamic>.from(request.data),
     );
 
     if (!response.success) {
+      if (response.message is List) {
+        throw ValidationFailure(response.message);
+      }
       throw Exception(response.message);
     }
 
     return response;
-  },
-);
-
-final getGuidanceDetailByCodeOutlineComponent = AutoDisposeFutureProviderFamily(
-  (ref, codeMasterOutlineComponent) async {
-    final dio = ref.watch(dioClient);
-    final user = ref.watch(userNotifier).item;
-    final userId = user?.data.id;
-    final selectedFilter = ref.watch(selectedFilterGuidanceState);
-
-    final request = await dio.get(
-      "/dosen/guidance/detail/$userId/code-master-outline-component/$codeMasterOutlineComponent",
-      queryParameters: {
-        "status": selectedFilter.name,
-      },
-      options: Options(
-        headers: {"Authorization": "Bearer ${user?.token}"},
-      ),
-    );
-    final response = LectureGuidanceDetailDetailModel.fromJson(
-      Map.from(request.data),
-    );
-
-    if (!response.success) {
-      throw Exception(response.message);
-    }
-
-    return response;
-  },
-);
+  }
+}
