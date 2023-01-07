@@ -29,7 +29,7 @@
     <!--#enddocregion android-queries-->
    
    <application
-        android:label="bimtama"
+        android:label="Bimtama"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
