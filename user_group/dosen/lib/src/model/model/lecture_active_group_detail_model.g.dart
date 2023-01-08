@@ -10,6 +10,7 @@ LectureActiveGroupDetailModel _$LectureActiveGroupDetailModelFromJson(
         Map<String, dynamic> json) =>
     LectureActiveGroupDetailModel(
       success: json['success'] as bool,
+      message: json['message'] as String,
       data: json['data'] == null
           ? null
           : LectureActiveGroupDetailData.fromJson(
@@ -20,6 +21,7 @@ Map<String, dynamic> _$LectureActiveGroupDetailModelToJson(
         LectureActiveGroupDetailModel instance) =>
     <String, dynamic>{
       'success': instance.success,
+      'message': instance.message,
       'data': instance.data,
     };
 

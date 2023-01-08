@@ -1,8 +1,5 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-
-import 'package:path/path.dart' as p;
 
 void showSnackbar(
   BuildContext context, {
@@ -112,23 +109,14 @@ Future<DateTime?> showDateTimePicker(
   return null;
 }
 
-Future<String> downloadFile(String url) async {
-  final dio = Dio();
-  const uuid = Uuid();
-  final ext = p.extension(url);
-  final tempDir = await getTemporaryDirectory();
-  final path = "${tempDir.path}/${uuid.v4()}$ext";
+Future<String> openFile(String url) async {
+  final uri = Uri.parse(url);
 
-  await dio.download(
-    url,
-    path,
-    onReceiveProgress: (count, total) {},
-  );
-
-  final open = await OpenFile.open(path);
-  if (open.type != ResultType.done) {
-    throw Exception(open.message);
+  final canLaunch = await canLaunchUrl(uri);
+  if (!canLaunch) {
+    throw Exception("Tidak dapat membuka file");
   }
+  await launchUrl(uri, mode: LaunchMode.externalApplication);
 
-  return open.message;
+  return "Berhasil membuka aplikasi";
 }

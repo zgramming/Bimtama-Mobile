@@ -133,7 +133,6 @@ final getActiveGroup = AutoDisposeFutureProvider(
         headers: {"Authorization": "Bearer ${user?.token}"},
       ),
     );
-
     final response = LectureActiveGroupModel.fromJson(
       Map<String, dynamic>.from(request.data),
     );
@@ -178,11 +177,15 @@ final getActiveGroupDetail =
       Map.from(request.data),
     );
 
+    if (!response.success) {
+      throw response.message;
+    }
+
     return response;
   },
 );
 
-final getMyGroup = AutoDisposeFutureProvider(
+final getMyGroupList = AutoDisposeFutureProvider(
   (ref) async {
     final dio = ref.watch(dioClient);
     final user = ref.watch(userNotifier).item;

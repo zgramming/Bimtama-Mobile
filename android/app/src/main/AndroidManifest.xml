@@ -2,8 +2,7 @@
     package="zeffry.reynando.bimtama.bimtama">
     
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
-
+    
     <!--#docregion android-queries-->
     <!-- Provide required visibility configuration for API level 30 and above -->
     <queries>

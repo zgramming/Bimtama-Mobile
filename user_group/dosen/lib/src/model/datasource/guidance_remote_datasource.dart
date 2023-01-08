@@ -37,7 +37,7 @@ class GuidanceRemoteDatasource {
   Future<GuidanceUpdateResponseModel> update(GuidanceFormModel form) async {
     final data = FormData.fromMap({
       "lecture_note": form.lectureNote,
-      "status": form.status,
+      "status": form.status.name,
       if (form.file != null)
         "file": await MultipartFile.fromFile(
           form.file?.path ?? "",

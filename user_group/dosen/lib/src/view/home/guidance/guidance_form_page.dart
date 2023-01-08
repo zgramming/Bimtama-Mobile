@@ -51,6 +51,37 @@ class _GuidanceFormPageState extends ConsumerState<GuidanceFormPage> {
         loading: () => log("Loading..."),
       );
     });
+
+    ref.listen(
+      lectureGuidanceNotifier.select((value) => value.onUpdate),
+      (previous, next) {
+        next.when(
+          data: (data) {
+            showSnackbar(
+              context,
+              text: Text("${data?.message}"),
+              color: Colors.green,
+            );
+
+            // TODO: Jika berhasil update ke rejected / approved, disabled button update
+
+            /// Refresh & back to previous page
+            ref.invalidate(getGuidanceDetailByCodeOutlineComponent);
+            context.pop();
+          },
+          error: (error, stackTrace) => showSnackbar(
+            context,
+            text: Text("$error"),
+            color: Colors.red,
+          ),
+          loading: () => showSnackbar(
+            context,
+            text: const Text("Loading..."),
+            color: secondary,
+          ),
+        );
+      },
+    );
     return future.when(
       data: (response) {
         final guidance = response.data;
@@ -140,11 +171,12 @@ class _GuidanceFormPageState extends ConsumerState<GuidanceFormPage> {
 
                     final form = GuidanceFormModel(
                       token: token,
-                      id: widget.id,
-                      lectureNote: '',
-                      status: GuidanceStatus.approved,
+                      id: id,
+                      lectureNote: _lectureNoteController.text,
+                      status: _selectedStatus,
                       file: null,
                     );
+                    log("form $form");
                     await ref
                         .read(lectureGuidanceNotifier.notifier)
                         .update(form);

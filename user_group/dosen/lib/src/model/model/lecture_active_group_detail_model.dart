@@ -8,10 +8,12 @@ part 'lecture_active_group_detail_model.g.dart';
 class LectureActiveGroupDetailModel extends Equatable {
   const LectureActiveGroupDetailModel({
     required this.success,
+    required this.message,
     required this.data,
   });
 
   final bool success;
+  final String message;
   final LectureActiveGroupDetailData? data;
 
   factory LectureActiveGroupDetailModel.fromJson(Map<String, dynamic> json) =>
@@ -19,7 +21,7 @@ class LectureActiveGroupDetailModel extends Equatable {
   Map<String, dynamic> toJson() => _$LectureActiveGroupDetailModelToJson(this);
 
   @override
-  List<Object?> get props => [success, data];
+  List<Object?> get props => [success, message, data];
 
   @override
   bool get stringify => true;

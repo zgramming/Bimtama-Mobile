@@ -32,7 +32,7 @@ class _DropdownGroups extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final future = ref.watch(getMyGroup);
+    final future = ref.watch(getMyGroupList);
 
     return future.when(
       data: (response) {

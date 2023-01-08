@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
@@ -66,15 +68,11 @@ class _ButtonDownloadFileState extends State<_ButtonDownloadFile> {
                 onPressed: () async {
                   try {
                     setState(() => isLoading = true);
-                    final url = "$baseFileDirectoryURL/${widget.file}";
-                    final message = await downloadFile(url);
+                    await openFile("$baseFileDirectoryURL/${widget.file}");
+
                     if (!mounted) return;
-                    showSnackbar(
-                      context,
-                      text: Text(message),
-                      color: Colors.green,
-                    );
                   } catch (e) {
+                    log("Error Download File $e");
                     showSnackbar(
                       context,
                       text: Text("$e"),
@@ -85,7 +83,7 @@ class _ButtonDownloadFileState extends State<_ButtonDownloadFile> {
                   }
                 },
                 icon: const Icon(Icons.file_download),
-                label: const Text("Lihat File"),
+                label: const Text("File"),
               ),
       ),
     );
