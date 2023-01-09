@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,94 @@ import 'package:flutter/material.dart';
 import '../../../model/datasource/guidance_remote_datasource.dart';
 import '../../../model/model/lecture_guidance_detail_outline_model.dart';
 import '../../../view_model/guidance/guidance_notifier.dart';
+
+class _ButtonUploadFile extends StatelessWidget {
+  const _ButtonUploadFile({
+    Key? key,
+    required this.onPickFile,
+  }) : super(key: key);
+
+  final Function(File file) onPickFile;
+
+  @override
+  Widget build(BuildContext context) {
+    return FormBody(
+      title: "File Pendukung",
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: OutlinedButton.icon(
+          onPressed: () async {
+            try {
+              final pickedFile = await pickFile();
+              onPickFile(pickedFile);
+            } catch (e) {
+              showSnackbar(context, text: Text("$e"), color: Colors.red);
+            } finally {}
+          },
+          style: outlineButtonStyle(),
+          icon: const Icon(Icons.upload),
+          label: const Text("Pilih File"),
+        ),
+      ),
+    );
+  }
+}
+
+class _ButtonDownloadFile extends StatefulWidget {
+  const _ButtonDownloadFile({
+    Key? key,
+    required this.file,
+  }) : super(key: key);
+
+  final String? file;
+
+  @override
+  State<_ButtonDownloadFile> createState() => _ButtonDownloadFileState();
+}
+
+class _ButtonDownloadFileState extends State<_ButtonDownloadFile> {
+  bool isLoading = false;
+  bool isHaveFile = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isHaveFile = widget.file != null && (widget.file ?? "").isNotEmpty;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isHaveFile) {
+      return const Text("-");
+    }
+
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return OutlinedButton.icon(
+      onPressed: () async {
+        try {
+          setState(() => isLoading = true);
+          await openFile("$baseFileDirectoryURL/${widget.file}");
+
+          if (!mounted) return;
+        } catch (e) {
+          log("Error Download File $e");
+          showSnackbar(
+            context,
+            text: Text("$e"),
+            color: Colors.red,
+          );
+        } finally {
+          setState(() => isLoading = false);
+        }
+      },
+      icon: const Icon(Icons.download),
+      label: const Text("Download"),
+    );
+  }
+}
 
 class GuidanceFormPage extends ConsumerStatefulWidget {
   const GuidanceFormPage({
@@ -24,6 +113,8 @@ class _GuidanceFormPageState extends ConsumerState<GuidanceFormPage> {
 
   late final TextEditingController _lectureNoteController;
   GuidanceStatus _selectedStatus = GuidanceStatus.progress;
+  File? _selectedFile;
+
   @override
   void initState() {
     super.initState();
@@ -85,6 +176,8 @@ class _GuidanceFormPageState extends ConsumerState<GuidanceFormPage> {
     return future.when(
       data: (response) {
         final guidance = response.data;
+        final isProgress = (guidance?.status ?? GuidanceStatus.progress) ==
+            GuidanceStatus.progress;
         return Scaffold(
           appBar: AppBar(title: Text("Bimbingan ${guidance?.user?.name}")),
           body: Column(
@@ -108,6 +201,17 @@ class _GuidanceFormPageState extends ConsumerState<GuidanceFormPage> {
                           FormBody(
                             title: "Deskripsi",
                             child: Text(guidance?.description ?? ""),
+                          ),
+                          const SizedBox(height: 16.0),
+                          FormBody(
+                            title: "File Mahasiswa",
+                            child: Builder(builder: (context) {
+                              return Align(
+                                alignment: Alignment.centerLeft,
+                                child:
+                                    _ButtonDownloadFile(file: guidance?.file),
+                              );
+                            }),
                           ),
                           const SizedBox(height: 32.0),
                           const Divider(thickness: 2, color: secondary),
@@ -145,49 +249,68 @@ class _GuidanceFormPageState extends ConsumerState<GuidanceFormPage> {
                               },
                             ),
                           ),
+                          const SizedBox(height: 16.0),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _ButtonUploadFile(
+                                onPickFile: (file) {
+                                  setState(() {
+                                    _selectedFile = file;
+                                  });
+                                },
+                              ),
+                              if (_selectedFile != null) ...[
+                                const SizedBox(height: 8.0),
+                                Text(basename(_selectedFile?.path ?? "")),
+                              ]
+                            ],
+                          ),
+                          const SizedBox(height: 40.0),
                         ],
                       ),
                     ),
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final validate = _formKey.currentState?.validate() ?? false;
-                    if (!validate) {
-                      showSnackbar(
-                        context,
-                        text: const Text("Validation Error"),
-                        color: Colors.red,
+              if (isProgress)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final validate =
+                          _formKey.currentState?.validate() ?? false;
+                      if (!validate) {
+                        showSnackbar(
+                          context,
+                          text: const Text("Validation Error"),
+                          color: Colors.red,
+                        );
+                        return;
+                      }
+
+                      final id = widget.id;
+                      final user = ref.read(userNotifier).item;
+                      final token = user?.token ?? "";
+
+                      final form = GuidanceFormModel(
+                        token: token,
+                        id: id,
+                        lectureNote: _lectureNoteController.text,
+                        status: _selectedStatus,
+                        file: _selectedFile,
                       );
-                      return;
-                    }
-
-                    final id = widget.id;
-                    final user = ref.read(userNotifier).item;
-                    final token = user?.token ?? "";
-
-                    final form = GuidanceFormModel(
-                      token: token,
-                      id: id,
-                      lectureNote: _lectureNoteController.text,
-                      status: _selectedStatus,
-                      file: null,
-                    );
-                    log("form $form");
-                    await ref
-                        .read(lectureGuidanceNotifier.notifier)
-                        .update(form);
-                  },
-                  style: elevatedButtonStyle(),
-                  child: Text(
-                    "Simpan",
-                    style: bodyFontWhite.copyWith(fontSize: 16.0),
+                      await ref
+                          .read(lectureGuidanceNotifier.notifier)
+                          .update(form);
+                    },
+                    style: elevatedButtonStyle(),
+                    child: Text(
+                      "Simpan",
+                      style: bodyFontWhite.copyWith(fontSize: 16.0),
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         );

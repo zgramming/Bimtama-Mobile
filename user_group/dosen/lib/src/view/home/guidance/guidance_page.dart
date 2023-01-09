@@ -83,7 +83,7 @@ class _ButtonDownloadFileState extends State<_ButtonDownloadFile> {
                   }
                 },
                 icon: const Icon(Icons.file_download),
-                label: const Text("File"),
+                label: const Text("Download"),
               ),
       ),
     );
@@ -105,7 +105,7 @@ class _GuidanceDetailItem extends StatelessWidget {
         guidance.file != null && (guidance.file?.isNotEmpty ?? false);
     final isApproved = guidance.status == GuidanceStatus.approved;
     final isRejected = guidance.status == GuidanceStatus.rejected;
-    // final isProgress = guidance.status == GuidanceStatus.progress;
+    final isProgress = guidance.status == GuidanceStatus.progress;
     return ListTile(
       contentPadding: const EdgeInsets.only(),
       title: Text(
@@ -163,8 +163,11 @@ class _GuidanceDetailItem extends StatelessWidget {
                   );
                 },
                 style: elevatedButtonStyle(padding: const EdgeInsets.all(8.0)),
-                icon: const Icon(Icons.edit),
-                label: const Text("Update"),
+                icon: Icon(
+                  !isProgress ? Icons.visibility : Icons.edit,
+                  size: 16,
+                ),
+                label: Text(!isProgress ? "Detail" : "Periksa"),
               ),
             ),
             const SizedBox(height: 8.0),

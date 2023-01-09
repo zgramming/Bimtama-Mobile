@@ -35,12 +35,14 @@ class GuidanceRemoteDatasource {
   final Dio dio;
 
   Future<GuidanceUpdateResponseModel> update(GuidanceFormModel form) async {
+    final path = form.file?.path;
     final data = FormData.fromMap({
       "lecture_note": form.lectureNote,
       "status": form.status.name,
       if (form.file != null)
         "file": await MultipartFile.fromFile(
-          form.file?.path ?? "",
+          path ?? "",
+          contentType: MediaType.parse(lookupMimeType(path ?? "") ?? ""),
         )
     });
 

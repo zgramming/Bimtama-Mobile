@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:core/core.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 void showSnackbar(
@@ -119,4 +122,18 @@ Future<String> openFile(String url) async {
   await launchUrl(uri, mode: LaunchMode.externalApplication);
 
   return "Berhasil membuka aplikasi";
+}
+
+Future<File> pickFile() async {
+  final result = await FilePicker.platform.pickFiles(
+    dialogTitle: "Pilih file",
+    type: FileType.custom,
+    allowedExtensions: ["pdf", "doc", "docx"],
+  );
+
+  if (result == null) {
+    throw Exception("Membatalkan aksi");
+  }
+  final file = File(result.files.single.path ?? "");
+  return file;
 }
