@@ -178,7 +178,7 @@ class _GuidanceDetailItem extends StatelessWidget {
   }
 }
 
-class _TabBarViewItem extends ConsumerWidget {
+class _TabBarViewItem extends ConsumerStatefulWidget {
   const _TabBarViewItem({
     Key? key,
     required this.outlineComponent,
@@ -187,9 +187,16 @@ class _TabBarViewItem extends ConsumerWidget {
   final LectureGuidanceMasterOutlineData outlineComponent;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  createState() => _TabBarViewItemState();
+}
+
+class _TabBarViewItemState extends ConsumerState<_TabBarViewItem>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
     final future = ref.watch(
-      getGuidanceDetailByCodeOutlineComponent(outlineComponent.code),
+      getGuidanceDetailByCodeOutlineComponent(widget.outlineComponent.code),
     );
     return future.when(
       data: (response) {
@@ -204,22 +211,35 @@ class _TabBarViewItem extends ConsumerWidget {
                     child: Text("Bimbingan Tidak Ditemukan"),
                   );
                 }
-                return ListView.separated(
-                  padding: const EdgeInsets.only(
-                    left: 16.0,
-                    right: 16.0,
-                    top: 16.0,
-                    bottom: 40.0,
-                  ),
-                  itemCount: items.length,
-                  separatorBuilder: (context, index) => const Divider(),
-                  itemBuilder: (context, index) {
-                    final item = items[index];
-                    return _GuidanceDetailItem(
-                      guidance: item,
-                      index: index,
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    ref.invalidate(
+                      getGuidanceDetailByCodeOutlineComponent(
+                          widget.outlineComponent.code),
+                    );
+                    showSnackbar(
+                      context,
+                      text: const Text("Refresh"),
+                      color: primary,
                     );
                   },
+                  child: ListView.separated(
+                    padding: const EdgeInsets.only(
+                      left: 16.0,
+                      right: 16.0,
+                      top: 16.0,
+                      bottom: 40.0,
+                    ),
+                    itemCount: items.length,
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      return _GuidanceDetailItem(
+                        guidance: item,
+                        index: index,
+                      );
+                    },
+                  ),
                 );
               },
             ),
@@ -256,6 +276,9 @@ class _TabBarViewItem extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class GuidancePage extends ConsumerStatefulWidget {

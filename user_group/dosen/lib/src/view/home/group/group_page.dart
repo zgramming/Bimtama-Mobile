@@ -147,6 +147,7 @@ class _GroupMembers extends ConsumerWidget {
             ),
             ListView.separated(
               shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: items.length,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
@@ -194,23 +195,32 @@ class _GroupMembers extends ConsumerWidget {
   }
 }
 
-class GroupPage extends StatelessWidget {
+class GroupPage extends ConsumerWidget {
   const GroupPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SafeArea(
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: const [
-                _CardActiveGroupInfo(),
-                SizedBox(height: 24.0),
-                _GroupMembers(),
-              ],
+        body: RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(getActiveGroup);
+            ref.invalidate(getActiveGroupMember);
+
+            showSnackbar(context, text: const Text("Refresh"), color: primary);
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: const [
+                  _CardActiveGroupInfo(),
+                  SizedBox(height: 24.0),
+                  _GroupMembers(),
+                ],
+              ),
             ),
           ),
         ),

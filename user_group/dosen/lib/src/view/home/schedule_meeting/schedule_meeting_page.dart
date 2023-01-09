@@ -249,7 +249,7 @@ class _ScheduleMeetingItem extends StatelessWidget {
   }
 }
 
-class TabBarViewItem extends ConsumerWidget {
+class TabBarViewItem extends ConsumerStatefulWidget {
   const TabBarViewItem({
     Key? key,
     required this.type,
@@ -258,8 +258,15 @@ class TabBarViewItem extends ConsumerWidget {
   final String type;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final future = ref.watch(getScheduleMeetingByType(type));
+  createState() => _TabBarViewItemState();
+}
+
+class _TabBarViewItemState extends ConsumerState<TabBarViewItem>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    final future = ref.watch(getScheduleMeetingByType(widget.type));
     return future.when(
       data: (response) {
         final items = response.data;
@@ -270,24 +277,34 @@ class TabBarViewItem extends ConsumerWidget {
         return Stack(
           fit: StackFit.expand,
           children: [
-            ListView.separated(
-              padding: const EdgeInsets.only(
-                left: 16.0,
-                right: 16.0,
-                top: 16.0,
-                bottom: 60.0,
-              ),
-              itemCount: items.length,
-              shrinkWrap: true,
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                final item = items[index];
-
-                return _ScheduleMeetingItem(
-                  item: item,
-                  index: index,
+            RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(getScheduleMeetingByType(widget.type));
+                showSnackbar(
+                  context,
+                  text: const Text("Refresh"),
+                  color: primary,
                 );
               },
+              child: ListView.separated(
+                padding: const EdgeInsets.only(
+                  left: 16.0,
+                  right: 16.0,
+                  top: 16.0,
+                  bottom: 60.0,
+                ),
+                itemCount: items.length,
+                shrinkWrap: true,
+                separatorBuilder: (context, index) => const Divider(),
+                itemBuilder: (context, index) {
+                  final item = items[index];
+
+                  return _ScheduleMeetingItem(
+                    item: item,
+                    index: index,
+                  );
+                },
+              ),
             ),
             Positioned(
               bottom: 15,
@@ -298,7 +315,7 @@ class TabBarViewItem extends ConsumerWidget {
                     routeDosenScheduleMeetingForm,
                     params: {
                       "id": "0",
-                      "type": type,
+                      "type": widget.type,
                     },
                   );
                 },
@@ -317,6 +334,9 @@ class TabBarViewItem extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class ScheduleMeetingPage extends StatefulWidget {
