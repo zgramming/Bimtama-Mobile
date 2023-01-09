@@ -15,9 +15,10 @@ const routeSplash = 'splash';
 const routeDosenHome = 'dosen/home';
 const routeDosenGroupForm = 'dosen/group/form';
 const routeDosenScheduleMeetingForm = 'dosen/schedule-meeting/form';
+const routeDosenGuidanceForm = 'dosen/guidance/form';
+
 const routeDosenSettingActiveGroup = 'dosen/setting/active-group';
 const routeDosenSettingProfile = 'dosen/setting/profile';
-const routeDosenGuidanceForm = 'dosen/guidance/form';
 
 /// Mahasiswa
 const routeMahasiswaHome = 'mahasiswa/home';
