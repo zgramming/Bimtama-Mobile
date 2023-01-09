@@ -66,6 +66,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             context,
             text: const Text("Loading..."),
             color: secondary,
+            duration: const Duration(days: 365),
           ),
         );
       },
