@@ -1,27 +1,45 @@
-import 'package:dosen/dosen.dart' as dosen;
+import 'package:dosen/dosen.dart' as dosen
+    show
+        HomePage,
+        GroupFormPage,
+        ScheduleMeetingGroupFormPage,
+        GuidanceFormPage,
+        SettingProfilePage,
+        SettingActiveGroupPage;
+
 import 'package:go_router/go_router.dart';
 
-import 'package:mahasiswa/mahasiswa.dart' as mahasiswa;
+import 'package:mahasiswa/mahasiswa.dart' as mahasiswa
+    show
+        HomePage,
+        GroupPage,
+        GuidancePage,
+        OutlinePage,
+        ProfilePage,
+        ScheduleMeetingPage;
 
 import 'src/view/login/login_page.dart';
 import 'src/view/register/register_page.dart';
 import 'src/view/splash/splash_page.dart';
 
-const routeLogin = 'login';
-const routeRegister = 'register';
-const routeSplash = 'splash';
+const routeDosenGroupForm = 'dosen/group/form';
+const routeDosenGuidanceForm = 'dosen/guidance/form';
 
 /// Dosen
 const routeDosenHome = 'dosen/home';
-const routeDosenGroupForm = 'dosen/group/form';
-const routeDosenScheduleMeetingForm = 'dosen/schedule-meeting/form';
-const routeDosenGuidanceForm = 'dosen/guidance/form';
 
+const routeDosenScheduleMeetingForm = 'dosen/schedule-meeting/form';
 const routeDosenSettingActiveGroup = 'dosen/setting/active-group';
 const routeDosenSettingProfile = 'dosen/setting/profile';
+const routeLogin = 'login';
 
 /// Mahasiswa
 const routeMahasiswaHome = 'mahasiswa/home';
+const routeMahasiswaSettingOutline = 'mahasiswa/setting/outline';
+const routeMahasiswaSettingProfile = 'mahasiswa/setting/profile';
+
+const routeRegister = 'register';
+const routeSplash = 'splash';
 
 final dosenRoutes = <RouteBase>[
   GoRoute(
@@ -76,6 +94,16 @@ final mahasiswaRoutes = <RouteBase>[
     path: "/mahasiswa/home",
     name: routeMahasiswaHome,
     builder: (context, state) => const mahasiswa.HomePage(),
+  ),
+  GoRoute(
+    path: "/mahasiswa/setting/profile",
+    name: routeMahasiswaSettingProfile,
+    builder: (context, state) => const mahasiswa.ProfilePage(),
+  ),
+  GoRoute(
+    path: "/mahasiswa/setting/outline",
+    name: routeMahasiswaSettingOutline,
+    builder: (context, state) => const mahasiswa.OutlinePage(),
   ),
 ];
 

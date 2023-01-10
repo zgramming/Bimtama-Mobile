@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:dosen/dosen.dart';
+import 'package:dosen/dosen.dart' as dosen;
+import 'package:mahasiswa/mahasiswa.dart' as mahasiswa;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'src/model/datasource/authentication_remote_datasource.dart';
@@ -18,41 +19,53 @@ final authenticationNotifier =
       repository: ref.watch(_authenticationRepository));
 });
 
-final lectureGroupNotifier = StateNotifierProvider<GroupNotifier, GroupState>(
-  (ref) => GroupNotifier(
+final lectureGroupNotifier =
+    StateNotifierProvider<dosen.GroupNotifier, dosen.GroupState>(
+  (ref) => dosen.GroupNotifier(
     repository: ref.watch(_lectureGroupRepository),
   ),
 );
 
-final lectureScheduleMeetingNotifier =
-    StateNotifierProvider<ScheduleMeetingNotifier, ScheduleMeetingState>(
-        (ref) => ScheduleMeetingNotifier(
-            repository: ref.watch(_lectureScheduleMeetingRepository)));
+final lectureScheduleMeetingNotifier = StateNotifierProvider<
+        dosen.ScheduleMeetingNotifier, dosen.ScheduleMeetingState>(
+    (ref) => dosen.ScheduleMeetingNotifier(
+        repository: ref.watch(_lectureScheduleMeetingRepository)));
 
 final lectureProfileNotifier =
-    StateNotifierProvider<ProfileNotifier, ProfileState>((ref) =>
-        ProfileNotifier(repository: ref.watch(_lectureProfileRepository)));
+    StateNotifierProvider<dosen.ProfileNotifier, dosen.ProfileState>((ref) =>
+        dosen.ProfileNotifier(
+            repository: ref.watch(_lectureProfileRepository)));
 
 final lectureGuidanceNotifier =
-    StateNotifierProvider<GuidanceNotifier, GuidanceState>((ref) =>
-        GuidanceNotifier(repository: ref.watch(_lectureGuidanceRepositoru)));
+    StateNotifierProvider<dosen.GuidanceNotifier, dosen.GuidanceState>((ref) =>
+        dosen.GuidanceNotifier(
+            repository: ref.watch(_lectureGuidanceRepositoru)));
+
+final mahasiswaProfileNotifier =
+    StateNotifierProvider<mahasiswa.ProfileNotifier, mahasiswa.ProfileState>(
+        (ref) => mahasiswa.ProfileNotifier(
+            repository: ref.watch(_mahasiswaProfileRepository)));
 
 //! Start Repository
 final _authenticationRepository = Provider((ref) => AuthenticationRepository(
     remoteDatasource: ref.watch(_authenticationRemoteDatasource)));
 
-final _lectureGroupRepository = Provider((ref) => GroupRepository(
+final _lectureGroupRepository = Provider((ref) => dosen.GroupRepository(
     remoteDatasource: ref.watch(_lectureGroupRemoteDatasource)));
 
 final _lectureScheduleMeetingRepository = Provider((ref) =>
-    ScheduleMeetingRepository(
+    dosen.ScheduleMeetingRepository(
         remoteDatasource: ref.watch(_lectureScheduleMeetingRemoteDatasource)));
 
-final _lectureProfileRepository = Provider((ref) => ProfileRepository(
+final _lectureProfileRepository = Provider((ref) => dosen.ProfileRepository(
     remoteDatasource: ref.watch(_lectureProfileRemoteDatasource)));
 
-final _lectureGuidanceRepositoru = Provider((ref) => GuidanceRepository(
+final _lectureGuidanceRepositoru = Provider((ref) => dosen.GuidanceRepository(
     remoteDatasource: ref.watch(_lectureGuidanceRemoteDatasource)));
+
+final _mahasiswaProfileRepository = Provider((ref) =>
+    mahasiswa.ProfileRepository(
+        remoteDatasource: ref.watch(_mahasiswaProfileRemoteDatasource)));
 
 //! Start Datasource
 final _authenticationRemoteDatasource = Provider(
@@ -60,21 +73,24 @@ final _authenticationRemoteDatasource = Provider(
 );
 
 final _lectureGroupRemoteDatasource =
-    Provider((ref) => GroupRemoteDatasource(dio: ref.watch(dioClient)));
+    Provider((ref) => dosen.GroupRemoteDatasource(dio: ref.watch(dioClient)));
 
 final _lectureScheduleMeetingRemoteDatasource = Provider(
-  (ref) => ScheduleMeetingRemoteDatasource(
+  (ref) => dosen.ScheduleMeetingRemoteDatasource(
     dio: ref.watch(dioClient),
   ),
 );
 
 final _lectureProfileRemoteDatasource = Provider(
-  (ref) => ProfileRemoteDatasource(dio: ref.watch(dioClient)),
+  (ref) => dosen.ProfileRemoteDatasource(dio: ref.watch(dioClient)),
 );
 
 final _lectureGuidanceRemoteDatasource = Provider(
-  (ref) => GuidanceRemoteDatasource(dio: ref.watch(dioClient)),
+  (ref) => dosen.GuidanceRemoteDatasource(dio: ref.watch(dioClient)),
 );
+
+final _mahasiswaProfileRemoteDatasource = Provider(
+    (ref) => mahasiswa.ProfileRemoteDatasource(dio: ref.watch(dioClient)));
 
 //! Start Utils
 final dioClient = Provider((ref) {

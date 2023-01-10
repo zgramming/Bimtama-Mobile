@@ -1,16 +1,16 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../view_model/profile/profile_notifier.dart';
+import '../../../../view_model/view_model.dart';
 
-class SettingProfilePage extends ConsumerStatefulWidget {
-  const SettingProfilePage({super.key});
+class ProfilePage extends ConsumerStatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  createState() => _SettingProfilePageState();
+  createState() => _ProfilePageState();
 }
 
-class _SettingProfilePageState extends ConsumerState<SettingProfilePage> {
+class _ProfilePageState extends ConsumerState<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController nameController;
@@ -35,7 +35,7 @@ class _SettingProfilePageState extends ConsumerState<SettingProfilePage> {
     final future = ref.watch(getProfile);
 
     ref.listen(
-      lectureProfileNotifier.select((value) => value.onUpdate),
+      mahasiswaProfileNotifier.select((value) => value.onUpdate),
       (previous, next) {
         next.when(
           data: (response) {
@@ -78,6 +78,7 @@ class _SettingProfilePageState extends ConsumerState<SettingProfilePage> {
     return future.when(
       data: (response) {
         final profile = response.data;
+
         return Scaffold(
           appBar: AppBar(title: Text("Edit Profile ${profile?.name}")),
           body: Column(
@@ -145,7 +146,7 @@ class _SettingProfilePageState extends ConsumerState<SettingProfilePage> {
                       final user = ref.read(userNotifier).item;
                       final token = user?.token ?? "";
 
-                      await ref.read(lectureProfileNotifier.notifier).update(
+                      await ref.read(mahasiswaProfileNotifier.notifier).update(
                             token,
                             userId: user?.data.id ?? 0,
                             name: nameController.text,

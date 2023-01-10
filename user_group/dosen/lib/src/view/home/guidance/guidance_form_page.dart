@@ -154,8 +154,6 @@ class _GuidanceFormPageState extends ConsumerState<GuidanceFormPage> {
               color: Colors.green,
             );
 
-            // TODO: Jika berhasil update ke rejected / approved, disabled button update
-
             /// Refresh & back to previous page
             ref.invalidate(getGuidanceDetailByCodeOutlineComponent);
             context.pop();

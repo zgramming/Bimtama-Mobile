@@ -51,7 +51,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 text: Text("Usergroup $group tidak tersedia"),
                 color: Colors.red,
               ),
-              saveSession: () => ref.read(userNotifier.notifier).setUser(data!),
+              saveSession: () {
+                ref.read(userNotifier.notifier).setUser(data!);
+                showSnackbar(
+                  context,
+                  text: const Text("Berhasil login"),
+                  color: Colors.green,
+                );
+              },
               whenUnauthorized: () => context.goNamed(routeLogin),
               whenDosen: () => context.goNamed(routeDosenHome),
               whenMahasiswa: () => context.goNamed(routeMahasiswaHome),
