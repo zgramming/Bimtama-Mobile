@@ -168,7 +168,7 @@ class _SettingProfilePageState extends ConsumerState<SettingProfilePage> {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         );
