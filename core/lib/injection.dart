@@ -46,6 +46,11 @@ final mahasiswaProfileNotifier =
         (ref) => mahasiswa.ProfileNotifier(
             repository: ref.watch(_mahasiswaProfileRepository)));
 
+final mahasiswaOutlineNotifier =
+    StateNotifierProvider<mahasiswa.OutlineNotifier, mahasiswa.OutlineState>(
+        (ref) => mahasiswa.OutlineNotifier(
+            repository: ref.watch(_mahasiswaOutlineRepository)));
+
 //! Start Repository
 final _authenticationRepository = Provider((ref) => AuthenticationRepository(
     remoteDatasource: ref.watch(_authenticationRemoteDatasource)));
@@ -66,6 +71,10 @@ final _lectureGuidanceRepositoru = Provider((ref) => dosen.GuidanceRepository(
 final _mahasiswaProfileRepository = Provider((ref) =>
     mahasiswa.ProfileRepository(
         remoteDatasource: ref.watch(_mahasiswaProfileRemoteDatasource)));
+
+final _mahasiswaOutlineRepository = Provider((ref) =>
+    mahasiswa.OutlineRepository(
+        remoteDatasource: ref.watch(_mahasiswaOutlineRemoteDatasource)));
 
 //! Start Datasource
 final _authenticationRemoteDatasource = Provider(
@@ -91,6 +100,9 @@ final _lectureGuidanceRemoteDatasource = Provider(
 
 final _mahasiswaProfileRemoteDatasource = Provider(
     (ref) => mahasiswa.ProfileRemoteDatasource(dio: ref.watch(dioClient)));
+
+final _mahasiswaOutlineRemoteDatasource = Provider(
+    (ref) => mahasiswa.OutlineRemoteDatasource(dio: ref.watch(dioClient)));
 
 //! Start Utils
 final dioClient = Provider((ref) {

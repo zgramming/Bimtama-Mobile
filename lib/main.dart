@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 // Map<String, dynamic> toJson() => _$AuthenticationResponseModelToJson(this);
 
 /// flutter pub run build_runner watch --delete-conflicting-outputs
-///
+
 Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
 }

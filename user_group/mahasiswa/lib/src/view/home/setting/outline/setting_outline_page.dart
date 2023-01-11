@@ -2,6 +2,7 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../model/datasource/outline_remote_datasource.dart';
 import '../../../../view_model/outline/outline_notifier.dart';
 
 class _SelectedOutlineModel extends Equatable {
@@ -95,6 +96,32 @@ class _OutlinePageState extends ConsumerState<OutlinePage> {
   @override
   Widget build(BuildContext context) {
     final future = ref.watch(getMahasiswaOutline);
+
+    ref.listen(
+      mahasiswaOutlineNotifier.select((value) => value.onUpsert),
+      (previous, next) {
+        next.when(
+          data: (response) {
+            showSnackbar(
+              context,
+              text: Text("${response?.message}"),
+              color: Colors.green,
+            );
+          },
+          error: (error, stackTrace) => showSnackbar(
+            context,
+            text: Text("$error"),
+            color: Colors.red,
+          ),
+          loading: () => showSnackbar(
+            context,
+            text: const Text("Loading..."),
+            color: secondary,
+          ),
+        );
+      },
+    );
+
     ref.listen(getMahasiswaOutline, (previous, next) {
       next.whenData((response) {
         final outline = response.data?.outline;
@@ -119,16 +146,19 @@ class _OutlinePageState extends ConsumerState<OutlinePage> {
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _DropdownOutline(
-                          value: _selectedOutline,
-                          onChange: (val) => setState(
-                            () => _selectedOutline = val,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _DropdownOutline(
+                            value: _selectedOutline,
+                            onChange: (val) => setState(
+                              () => _selectedOutline = val,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -140,6 +170,7 @@ class _OutlinePageState extends ConsumerState<OutlinePage> {
                     try {
                       final validate =
                           _formKey.currentState?.validate() ?? false;
+
                       if (!validate) {
                         showSnackbar(
                           context,
@@ -151,6 +182,16 @@ class _OutlinePageState extends ConsumerState<OutlinePage> {
 
                       final user = ref.read(userNotifier).item;
                       final token = user?.token ?? "";
+
+                      final form = OutlineFormModel(
+                        token: token,
+                        userId: user?.data.id ?? 0,
+                        outlineId: _selectedOutline?.id ?? 0,
+                      );
+
+                      await ref
+                          .read(mahasiswaOutlineNotifier.notifier)
+                          .upsert(form);
                     } catch (e) {
                       showSnackbar(
                         context,
