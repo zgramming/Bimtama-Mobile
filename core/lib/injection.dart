@@ -51,6 +51,11 @@ final mahasiswaOutlineNotifier =
         (ref) => mahasiswa.OutlineNotifier(
             repository: ref.watch(_mahasiswaOutlineRepository)));
 
+final mahasiswaGroupNotifier =
+    StateNotifierProvider<mahasiswa.GroupNotifier, mahasiswa.GroupState>(
+        (ref) => mahasiswa.GroupNotifier(
+            repository: ref.watch(_mahasiswaGroupRepository)));
+
 //! Start Repository
 final _authenticationRepository = Provider((ref) => AuthenticationRepository(
     remoteDatasource: ref.watch(_authenticationRemoteDatasource)));
@@ -75,6 +80,9 @@ final _mahasiswaProfileRepository = Provider((ref) =>
 final _mahasiswaOutlineRepository = Provider((ref) =>
     mahasiswa.OutlineRepository(
         remoteDatasource: ref.watch(_mahasiswaOutlineRemoteDatasource)));
+
+final _mahasiswaGroupRepository = Provider((ref) => mahasiswa.GroupRepository(
+    remoteDatasource: ref.watch(_mahasiswaGroupRemoteDatasource)));
 
 //! Start Datasource
 final _authenticationRemoteDatasource = Provider(
@@ -103,6 +111,9 @@ final _mahasiswaProfileRemoteDatasource = Provider(
 
 final _mahasiswaOutlineRemoteDatasource = Provider(
     (ref) => mahasiswa.OutlineRemoteDatasource(dio: ref.watch(dioClient)));
+
+final _mahasiswaGroupRemoteDatasource = Provider(
+    (ref) => mahasiswa.GroupRemoteDatasource(dio: ref.watch(dioClient)));
 
 //! Start Utils
 final dioClient = Provider((ref) {
