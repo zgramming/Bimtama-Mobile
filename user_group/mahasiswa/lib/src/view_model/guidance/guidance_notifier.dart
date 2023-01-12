@@ -1,0 +1,139 @@
+import 'package:core/core.dart';
+
+import '../../model/model/guidance_start_response_model.dart';
+import '../../model/model/mahasiswa_guidance_detail_model.dart';
+import '../../model/model/mahasiswa_guidance_model.dart';
+import '../../model/model/mahasiswa_guidance_outline_model.dart';
+import '../../model/model/mahasiswa_guidance_progress_model.dart';
+import '../../model/repository/guidance_repository.dart';
+
+class GuidanceState extends Equatable {
+  final AsyncValue<GuidanceStartResponseModel?> onStart;
+  const GuidanceState({
+    this.onStart = const AsyncData(null),
+  });
+
+  @override
+  List<Object> get props => [onStart];
+
+  @override
+  bool get stringify => true;
+
+  GuidanceState copyWith({
+    AsyncValue<GuidanceStartResponseModel?>? onStart,
+  }) {
+    return GuidanceState(
+      onStart: onStart ?? this.onStart,
+    );
+  }
+}
+
+class GuidanceNotifier extends StateNotifier<GuidanceState> {
+  final GuidanceRepository repository;
+  GuidanceNotifier({
+    required this.repository,
+  }) : super(const GuidanceState());
+
+  Future<void> start(
+    String token, {
+    required int userId,
+  }) async {
+    final result = await repository.start(token, userId: userId);
+    result.fold(
+      (failure) => state = state.copyWith(
+        onStart: AsyncError(failure.message, StackTrace.current),
+      ),
+      (response) => state = state.copyWith(onStart: AsyncData(response)),
+    );
+  }
+}
+
+final getGuidance = AutoDisposeFutureProvider(
+  (ref) async {
+    final dio = ref.watch(dioClient);
+    final user = ref.watch(userNotifier).item;
+    final request = await dio.get(
+      "/mahasiswa/guidance/${user?.data.id}",
+      options: Options(
+        headers: {"Authorization": "Bearer ${user?.token}"},
+      ),
+    );
+
+    final response = MahasiswaGuidanceModel.fromJson(Map.from(request.data));
+
+    if (!response.success) {
+      throw response.message;
+    }
+
+    return response;
+  },
+);
+
+final getGuidanceOutline = AutoDisposeFutureProvider(
+  (ref) async {
+    final dio = ref.watch(dioClient);
+    final user = ref.watch(userNotifier).item;
+    final request = await dio.get(
+      "/mahasiswa/guidance/outline/${user?.data.id}",
+      options: Options(
+        headers: {"Authorization": "Bearer ${user?.token}"},
+      ),
+    );
+
+    final response = MahasiswaGuidanceOutlineModel.fromJson(
+      Map.from(request.data),
+    );
+
+    if (!response.success) {
+      throw response.message;
+    }
+
+    return response;
+  },
+);
+
+final getGuidanceProgress = AutoDisposeFutureProvider(
+  (ref) async {
+    final dio = ref.watch(dioClient);
+    final user = ref.watch(userNotifier).item;
+    final request = await dio.get(
+      "/mahasiswa/guidance/progress/${user?.data.id}",
+      options: Options(
+        headers: {"Authorization": "Bearer ${user?.token}"},
+      ),
+    );
+
+    final response = MahasiswaGuidanceProgressModel.fromJson(
+      Map.from(request.data),
+    );
+
+    if (!response.success) {
+      throw response.message;
+    }
+
+    return response;
+  },
+);
+
+final getGuidanceDetail =
+    AutoDisposeFutureProviderFamily<MahasiswaGuidanceDetailModel, String>(
+  (ref, code) async {
+    final dio = ref.watch(dioClient);
+    final user = ref.watch(userNotifier).item;
+    final request = await dio.get(
+      "/mahasiswa/guidance/detail/${user?.data.id}/code/$code",
+      options: Options(
+        headers: {"Authorization": "Bearer ${user?.token}"},
+      ),
+    );
+    final response = MahasiswaGuidanceDetailModel.fromJson(
+      Map.from(request.data),
+    );
+
+    if (!response.success) {
+      throw response.message;
+    }
+
+    return response;
+  },
+);

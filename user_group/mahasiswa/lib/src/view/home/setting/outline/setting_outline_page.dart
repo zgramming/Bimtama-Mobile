@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +25,7 @@ class _DropdownOutline extends ConsumerWidget {
     this.value,
     required this.onChange,
   });
+
   final _SelectedOutlineModel? value;
   final void Function(_SelectedOutlineModel? val) onChange;
 
@@ -42,6 +42,7 @@ class _DropdownOutline extends ConsumerWidget {
           title: "Outline",
           child: DropdownButtonFormField<_SelectedOutlineModel>(
             value: value,
+            hint: const Text("Pilih Outline Kamu"),
             isExpanded: true,
             decoration: inputDecorationRounded(),
             selectedItemBuilder: (context) => mapping
@@ -125,10 +126,12 @@ class _OutlinePageState extends ConsumerState<OutlinePage> {
     ref.listen(getMahasiswaOutline, (previous, next) {
       next.whenData((response) {
         final outline = response.data?.outline;
-        _selectedOutline = _SelectedOutlineModel(
-          id: outline?.id ?? 0,
-          title: outline?.title ?? "",
-        );
+        if (outline != null) {
+          _selectedOutline = _SelectedOutlineModel(
+            id: outline.id ?? 0,
+            title: outline.title ?? "",
+          );
+        }
       });
     });
 

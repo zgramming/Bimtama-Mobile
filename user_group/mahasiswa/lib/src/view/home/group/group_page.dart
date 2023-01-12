@@ -302,7 +302,7 @@ class _MyGroupItem extends ConsumerWidget {
                           );
                         },
                         icon: const Icon(Icons.copy),
-                        label: const Text("Copy Code"),
+                        label: const Text("Salin Kode"),
                       ),
                     ),
                     const SizedBox(width: 24.0),
@@ -323,8 +323,11 @@ class _MyGroupItem extends ConsumerWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                         ),
-                        child: const Text(
-                          "Keluar Kelompok",
+                        child: const FittedBox(
+                          child: Text(
+                            "Keluar Kelompok",
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     )
