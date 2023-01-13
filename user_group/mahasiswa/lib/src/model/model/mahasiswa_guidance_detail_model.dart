@@ -55,6 +55,7 @@ class MahasiswaGuidanceDetailData extends Equatable {
     this.updatedAt,
     this.createdBy,
     this.updatedBy,
+    this.mstOutlineComponent,
   });
 
   final String? id;
@@ -72,6 +73,7 @@ class MahasiswaGuidanceDetailData extends Equatable {
   final DateTime? updatedAt;
   final dynamic createdBy;
   final dynamic updatedBy;
+  final MstOutlineComponent? mstOutlineComponent;
 
   factory MahasiswaGuidanceDetailData.fromJson(Map<String, dynamic> json) =>
       _$MahasiswaGuidanceDetailDataFromJson(json);
@@ -95,8 +97,33 @@ class MahasiswaGuidanceDetailData extends Equatable {
       updatedAt,
       createdBy,
       updatedBy,
+      mstOutlineComponent,
     ];
   }
+
+  @override
+  bool get stringify => true;
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+@immutable
+class MstOutlineComponent extends Equatable {
+  const MstOutlineComponent({
+    this.id,
+    this.code,
+    this.name,
+  });
+
+  final int? id;
+  final String? code;
+  final String? name;
+
+  factory MstOutlineComponent.fromJson(Map<String, dynamic> json) =>
+      _$MstOutlineComponentFromJson(json);
+  Map<String, dynamic> toJson() => _$MstOutlineComponentToJson(this);
+
+  @override
+  List<Object?> get props => [id, code, name];
 
   @override
   bool get stringify => true;

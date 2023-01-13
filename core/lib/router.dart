@@ -10,36 +10,30 @@ import 'package:dosen/dosen.dart' as dosen
 import 'package:go_router/go_router.dart';
 
 import 'package:mahasiswa/mahasiswa.dart' as mahasiswa
-    show
-        HomePage,
-        GroupPage,
-        GuidancePage,
-        OutlinePage,
-        ProfilePage,
-        ScheduleMeetingPage;
+    show HomePage, OutlinePage, ProfilePage, GuidanceFormPage;
 
 import 'src/view/login/login_page.dart';
 import 'src/view/register/register_page.dart';
 import 'src/view/splash/splash_page.dart';
 
-const routeDosenGroupForm = 'dosen/group/form';
-const routeDosenGuidanceForm = 'dosen/guidance/form';
+const routeLogin = 'login';
+const routeRegister = 'register';
+const routeSplash = 'splash';
 
 /// Dosen
 const routeDosenHome = 'dosen/home';
-
+const routeDosenGroupForm = 'dosen/group/form';
+const routeDosenGuidanceForm = 'dosen/guidance/form';
 const routeDosenScheduleMeetingForm = 'dosen/schedule-meeting/form';
+
 const routeDosenSettingActiveGroup = 'dosen/setting/active-group';
 const routeDosenSettingProfile = 'dosen/setting/profile';
-const routeLogin = 'login';
 
 /// Mahasiswa
 const routeMahasiswaHome = 'mahasiswa/home';
+const routeMahasiswaGuidanceForm = 'mahasiswa/guidance/form';
 const routeMahasiswaSettingOutline = 'mahasiswa/setting/outline';
 const routeMahasiswaSettingProfile = 'mahasiswa/setting/profile';
-
-const routeRegister = 'register';
-const routeSplash = 'splash';
 
 final dosenRoutes = <RouteBase>[
   GoRoute(
@@ -94,6 +88,20 @@ final mahasiswaRoutes = <RouteBase>[
     path: "/mahasiswa/home",
     name: routeMahasiswaHome,
     builder: (context, state) => const mahasiswa.HomePage(),
+  ),
+  GoRoute(
+    path: "/mahasiswa/guidance/form/:codeMasterOutlineComponent",
+    name: routeMahasiswaGuidanceForm,
+    builder: (context, state) {
+      final params = state.params;
+      final extra = state.extra as Map<String, dynamic>;
+      final codeMasterOutlineComponent =
+          params['codeMasterOutlineComponent'] ?? "";
+      return mahasiswa.GuidanceFormPage(
+        codeMasterOutlineComponent: codeMasterOutlineComponent,
+        title: extra['title'] ?? "",
+      );
+    },
   ),
   GoRoute(
     path: "/mahasiswa/setting/profile",

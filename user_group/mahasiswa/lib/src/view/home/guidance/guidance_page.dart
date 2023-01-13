@@ -258,7 +258,7 @@ class _GuidanceTab extends ConsumerWidget {
   }
 }
 
-class _GuidanceTabBarViewItem extends StatelessWidget {
+class _GuidanceTabBarViewItem extends StatefulWidget {
   const _GuidanceTabBarViewItem({
     Key? key,
     required this.item,
@@ -269,21 +269,29 @@ class _GuidanceTabBarViewItem extends StatelessWidget {
   final int index;
 
   @override
+  State<_GuidanceTabBarViewItem> createState() =>
+      _GuidanceTabBarViewItemState();
+}
+
+class _GuidanceTabBarViewItemState extends State<_GuidanceTabBarViewItem>
+    with AutomaticKeepAliveClientMixin {
+  @override
   Widget build(BuildContext context) {
-    final createdAt = item?.createdAt;
+    super.build(context);
+    final createdAt = widget.item?.createdAt;
     final format = DateFormat('dd MMMM yyyy HH:mm');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ListTile(
           contentPadding: const EdgeInsets.only(),
-          title: Text("${index + 1}. ${item?.title}"),
+          title: Text("${widget.index + 1}. ${widget.item?.title}"),
           subtitle: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(item?.description ?? ""),
+                Text(widget.item?.description ?? ""),
                 if (createdAt != null) ...[
                   const SizedBox(height: 8.0),
                   Row(
@@ -307,8 +315,8 @@ class _GuidanceTabBarViewItem extends StatelessWidget {
           ),
           trailing: Builder(
             builder: (context) {
-              final isApproved = item?.status == GuidanceStatus.approved;
-              final isRejected = item?.status == GuidanceStatus.rejected;
+              final isApproved = widget.item?.status == GuidanceStatus.approved;
+              final isRejected = widget.item?.status == GuidanceStatus.rejected;
 
               return Card(
                 margin: const EdgeInsets.only(),
@@ -320,7 +328,7 @@ class _GuidanceTabBarViewItem extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "${item?.status.name.toUpperCase()}",
+                    "${widget.item?.status.name.toUpperCase()}",
                     style: bodyFontBold.copyWith(
                       color: Colors.white,
                       fontSize: 10.0,
@@ -335,22 +343,27 @@ class _GuidanceTabBarViewItem extends StatelessWidget {
         Wrap(
           spacing: 10,
           children: [
-            _ButtonFileDosen(file: item?.fileLecture),
-            _ButtonNoteDosen(note: item?.lectureNote),
-            _ButtonMyFile(file: item?.file),
+            _ButtonFileDosen(file: widget.item?.fileLecture),
+            _ButtonNoteDosen(note: widget.item?.lectureNote),
+            _ButtonMyFile(file: widget.item?.file),
           ],
         ),
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class _GuidanceTabBarView extends ConsumerWidget {
-  const _GuidanceTabBarView(
-    this.masterOutlineComponentCode,
-  );
+  const _GuidanceTabBarView({
+    required this.masterOutlineComponentCode,
+    required this.title,
+  });
 
   final String masterOutlineComponentCode;
+  final String title;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -359,40 +372,61 @@ class _GuidanceTabBarView extends ConsumerWidget {
 
     if (!menuIsAccessible) {
       return const Center(
-          child: Text("Kamu belum mempunyai akses ke menu ini"));
+        child: Text("Kamu belum mempunyai akses ke menu ini"),
+      );
     }
+
     final future = ref.watch(getGuidanceDetail(masterOutlineComponentCode));
     return future.when(
       data: (response) {
         final items = response.data ?? [];
         return Stack(
           children: [
-            ListView.separated(
-              shrinkWrap: true,
-              itemCount: items.length,
-              padding: const EdgeInsets.only(
-                left: 16.0,
-                right: 16.0,
-                top: 16.0,
-                bottom: 100.0,
-              ),
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                final item = items[index];
-
-                return _GuidanceTabBarViewItem(
-                  item: item,
-                  index: index,
+            RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(getGuidanceDetail(masterOutlineComponentCode));
+                showSnackbar(
+                  context,
+                  text: const Text("Reloaded"),
+                  color: primary,
                 );
               },
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: items.length,
+                padding: const EdgeInsets.only(
+                  left: 16.0,
+                  right: 16.0,
+                  top: 16.0,
+                  bottom: 100.0,
+                ),
+                separatorBuilder: (context, index) => const Divider(),
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  return _GuidanceTabBarViewItem(
+                    item: item,
+                    index: index,
+                  );
+                },
+              ),
             ),
             Positioned(
               bottom: 15,
               right: 15,
               child: FloatingActionButton.extended(
-                label: Text("Pengajuan"),
-                icon: Icon(Icons.add),
-                onPressed: () {},
+                label: const Text("Pengajuan"),
+                icon: const Icon(Icons.add),
+                onPressed: () {
+                  context.pushNamed(
+                    routeMahasiswaGuidanceForm,
+                    params: {
+                      "codeMasterOutlineComponent": masterOutlineComponentCode,
+                    },
+                    extra: {
+                      "title": title,
+                    },
+                  );
+                },
               ),
             )
           ],
@@ -450,7 +484,9 @@ class __GuidanceOutlineState extends ConsumerState<_GuidanceOutline>
                 children: outlineComponent
                     .map(
                       (e) => _GuidanceTabBarView(
-                        e?.masterOutlineComponent?.code ?? "",
+                        masterOutlineComponentCode:
+                            e?.masterOutlineComponent?.code ?? "",
+                        title: e?.masterOutlineComponent?.name ?? "",
                       ),
                     )
                     .toList(),

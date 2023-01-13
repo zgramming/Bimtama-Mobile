@@ -1,6 +1,8 @@
 import 'package:core/core.dart';
+import 'package:mahasiswa/src/model/datasource/guidance_remote_datasource.dart';
 
 import '../../model/model/guidance_start_response_model.dart';
+import '../../model/model/guidance_submission_response_model.dart';
 import '../../model/model/mahasiswa_guidance_detail_model.dart';
 import '../../model/model/mahasiswa_guidance_model.dart';
 import '../../model/model/mahasiswa_guidance_outline_model.dart';
@@ -24,22 +26,27 @@ class _GuidanceOutlineData extends Equatable {
 }
 
 class GuidanceState extends Equatable {
-  final AsyncValue<GuidanceStartResponseModel?> onStart;
   const GuidanceState({
     this.onStart = const AsyncData(null),
+    this.onSubmission = const AsyncData(null),
   });
 
+  final AsyncValue<GuidanceStartResponseModel?> onStart;
+  final AsyncValue<GuidanceSubmissionResponseModel?> onSubmission;
+
   @override
-  List<Object> get props => [onStart];
+  List<Object> get props => [onStart, onSubmission];
 
   @override
   bool get stringify => true;
 
   GuidanceState copyWith({
     AsyncValue<GuidanceStartResponseModel?>? onStart,
+    AsyncValue<GuidanceSubmissionResponseModel?>? onSubmission,
   }) {
     return GuidanceState(
       onStart: onStart ?? this.onStart,
+      onSubmission: onSubmission ?? this.onSubmission,
     );
   }
 }
@@ -60,6 +67,16 @@ class GuidanceNotifier extends StateNotifier<GuidanceState> {
         onStart: AsyncError(failure.message, StackTrace.current),
       ),
       (response) => state = state.copyWith(onStart: AsyncData(response)),
+    );
+  }
+
+  Future<void> submission(GuidanceSubmissionFormModel form) async {
+    final result = await repository.submission(form);
+    result.fold(
+      (failure) => state = state.copyWith(
+        onSubmission: AsyncError(failure.message, StackTrace.current),
+      ),
+      (response) => state = state.copyWith(onSubmission: AsyncData(response)),
     );
   }
 }
