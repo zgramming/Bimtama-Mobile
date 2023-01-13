@@ -42,6 +42,10 @@ MahasiswaGuidanceProgressData _$MahasiswaGuidanceProgressDataFromJson(
           : DateTime.parse(json['updated_at'] as String),
       createdBy: json['created_by'],
       updatedBy: json['updated_by'],
+      mstOutlineComponent: json['mst_outline_component'] == null
+          ? null
+          : MstOutlineComponent.fromJson(
+              json['mst_outline_component'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MahasiswaGuidanceProgressDataToJson(
@@ -55,4 +59,20 @@ Map<String, dynamic> _$MahasiswaGuidanceProgressDataToJson(
       'updated_at': instance.updatedAt?.toIso8601String(),
       'created_by': instance.createdBy,
       'updated_by': instance.updatedBy,
+      'mst_outline_component': instance.mstOutlineComponent,
+    };
+
+MstOutlineComponent _$MstOutlineComponentFromJson(Map<String, dynamic> json) =>
+    MstOutlineComponent(
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      code: json['code'] as String?,
+    );
+
+Map<String, dynamic> _$MstOutlineComponentToJson(
+        MstOutlineComponent instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'code': instance.code,
     };

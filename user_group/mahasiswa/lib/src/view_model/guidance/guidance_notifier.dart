@@ -7,6 +7,22 @@ import '../../model/model/mahasiswa_guidance_outline_model.dart';
 import '../../model/model/mahasiswa_guidance_progress_model.dart';
 import '../../model/repository/guidance_repository.dart';
 
+class _GuidanceOutlineData extends Equatable {
+  const _GuidanceOutlineData({
+    required this.outline,
+    required this.progress,
+  });
+
+  final MahasiswaGuidanceOutlineModel outline;
+  final MahasiswaGuidanceProgressModel progress;
+
+  @override
+  List<Object> get props => [outline, progress];
+
+  @override
+  bool get stringify => true;
+}
+
 class GuidanceState extends Equatable {
   final AsyncValue<GuidanceStartResponseModel?> onStart;
   const GuidanceState({
@@ -135,5 +151,27 @@ final getGuidanceDetail =
     }
 
     return response;
+  },
+);
+
+final initializeGuidanceOutline =
+    AutoDisposeFutureProvider<_GuidanceOutlineData>(
+  (ref) async {
+    final outline = await ref.watch(getGuidanceOutline.future);
+    final progress = await ref.watch(getGuidanceProgress.future);
+    return _GuidanceOutlineData(
+      outline: outline,
+      progress: progress,
+    );
+  },
+);
+
+final guidanceMenuIsAccessible = Provider.autoDispose.family<bool, String?>(
+  (ref, mstOutlineComponentCode) {
+    final progress = ref.watch(getGuidanceProgress).valueOrNull;
+    final progressMenu = (progress?.data ?? [])
+        .map((e) => e?.mstOutlineComponent?.code)
+        .toList();
+    return progressMenu.contains(mstOutlineComponentCode);
   },
 );

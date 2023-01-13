@@ -232,14 +232,6 @@ class _GuidanceTab extends ConsumerWidget {
     final future = ref.watch(getGuidanceProgress);
     return future.when(
       data: (response) {
-        final progress = response.data ?? [];
-        final completedMasterOutlineID =
-            progress.map((e) => e?.mstOutlineComponentId).toList();
-        final mapping = outlineComponent
-            .where((element) => completedMasterOutlineID
-                .contains(element?.mstOutlineComponentId))
-            .toList();
-
         return Container(
           padding: EdgeInsets.only(top: statusBarHeight(context)),
           color: primary,
@@ -254,8 +246,9 @@ class _GuidanceTab extends ConsumerWidget {
                 ),
               ),
             ),
-            tabs:
-                mapping.map((e) => Tab(text: e?.title?.toUpperCase())).toList(),
+            tabs: outlineComponent
+                .map((e) => Tab(text: e?.title?.toUpperCase()))
+                .toList(),
           ),
         );
       },
@@ -354,30 +347,55 @@ class _GuidanceTabBarViewItem extends StatelessWidget {
 
 class _GuidanceTabBarView extends ConsumerWidget {
   const _GuidanceTabBarView(
-    this.masterOutlineCode,
+    this.masterOutlineComponentCode,
   );
 
-  final String masterOutlineCode;
+  final String masterOutlineComponentCode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final future = ref.watch(getGuidanceDetail(masterOutlineCode));
+    final menuIsAccessible =
+        ref.watch(guidanceMenuIsAccessible(masterOutlineComponentCode));
+
+    if (!menuIsAccessible) {
+      return const Center(
+          child: Text("Kamu belum mempunyai akses ke menu ini"));
+    }
+    final future = ref.watch(getGuidanceDetail(masterOutlineComponentCode));
     return future.when(
       data: (response) {
         final items = response.data ?? [];
-        return ListView.separated(
-          shrinkWrap: true,
-          itemCount: items.length,
-          padding: const EdgeInsets.all(16.0),
-          separatorBuilder: (context, index) => const Divider(),
-          itemBuilder: (context, index) {
-            final item = items[index];
+        return Stack(
+          children: [
+            ListView.separated(
+              shrinkWrap: true,
+              itemCount: items.length,
+              padding: const EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
+                top: 16.0,
+                bottom: 100.0,
+              ),
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final item = items[index];
 
-            return _GuidanceTabBarViewItem(
-              item: item,
-              index: index,
-            );
-          },
+                return _GuidanceTabBarViewItem(
+                  item: item,
+                  index: index,
+                );
+              },
+            ),
+            Positioned(
+              bottom: 15,
+              right: 15,
+              child: FloatingActionButton.extended(
+                label: Text("Pengajuan"),
+                icon: Icon(Icons.add),
+                onPressed: () {},
+              ),
+            )
+          ],
         );
       },
       error: (error, stackTrace) => Center(child: Text("$error")),
@@ -399,14 +417,14 @@ class __GuidanceOutlineState extends ConsumerState<_GuidanceOutline>
 
   @override
   Widget build(BuildContext context) {
-    final future = ref.watch(getGuidanceOutline);
+    final future = ref.watch(initializeGuidanceOutline);
 
     ref.listen(
-      getGuidanceOutline,
+      initializeGuidanceOutline,
       (previous, next) {
         next.whenData((response) {
           final outlineComponent =
-              response.data?.outline?.outlineComponent ?? [];
+              response.outline.data?.outline?.outlineComponent ?? [];
           _controller = TabController(
             length: outlineComponent.length,
             vsync: this,
@@ -417,7 +435,7 @@ class __GuidanceOutlineState extends ConsumerState<_GuidanceOutline>
 
     return future.when(
       data: (response) {
-        final outline = response.data?.outline;
+        final outline = response.outline.data?.outline;
         final outlineComponent = outline?.outlineComponent ?? [];
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
