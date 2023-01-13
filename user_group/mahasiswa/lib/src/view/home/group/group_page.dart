@@ -6,6 +6,7 @@ import '../../../model/datasource/group_remote_datasource.dart';
 import '../../../model/model/mahasiswa_mygroup_model.dart';
 import '../../../model/model/searched_group_model.dart';
 import '../../../view_model/group/group_notifier.dart';
+import '../../../view_model/guidance/guidance_notifier.dart';
 
 class _RowBody extends StatelessWidget {
   const _RowBody({
@@ -59,6 +60,7 @@ class _SearchedGroupItem extends ConsumerWidget {
 
             /// Refresh & clear form
             ref.invalidate(getMyGroupList);
+            ref.invalidate(getGuidance);
           },
           error: (error, stackTrace) => showSnackbar(
             context,
@@ -183,49 +185,6 @@ class _EmptyGroupState extends ConsumerState<_EmptyGroup> {
   }
 }
 
-class GroupPage extends ConsumerWidget {
-  const GroupPage({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(getMyGroupList);
-          },
-          child: SingleChildScrollView(
-            child: Container(
-              constraints: BoxConstraints(minHeight: h(context)),
-              padding: const EdgeInsets.all(16.0),
-              child: Consumer(
-                builder: (context, ref, child) {
-                  final future = ref.watch(getMyGroupList);
-
-                  return future.when(
-                    data: (response) {
-                      final group = response.data;
-
-                      if (group == null) {
-                        return const _EmptyGroup();
-                      }
-
-                      return _MyGroupItem(group: group);
-                    },
-                    error: (error, stackTrace) => Center(child: Text("$error")),
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                  );
-                },
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _MyGroupItem extends ConsumerWidget {
   const _MyGroupItem({
     Key? key,
@@ -251,6 +210,7 @@ class _MyGroupItem extends ConsumerWidget {
 
             /// Refresh & clear form
             ref.invalidate(getMyGroupList);
+            ref.invalidate(getGuidance);
           },
           error: (error, stackTrace) => showSnackbar(
             context,
@@ -370,6 +330,49 @@ class _MyGroupItem extends ConsumerWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+class GroupPage extends ConsumerWidget {
+  const GroupPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(getMyGroupList);
+          },
+          child: SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(minHeight: h(context)),
+              padding: const EdgeInsets.all(16.0),
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final future = ref.watch(getMyGroupList);
+
+                  return future.when(
+                    data: (response) {
+                      final group = response.data;
+
+                      if (group == null) {
+                        return const _EmptyGroup();
+                      }
+
+                      return _MyGroupItem(group: group);
+                    },
+                    error: (error, stackTrace) => Center(child: Text("$error")),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

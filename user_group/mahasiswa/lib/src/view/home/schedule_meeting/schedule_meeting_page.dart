@@ -228,8 +228,8 @@ class _ScheduleMeetingItem extends StatelessWidget {
   }
 }
 
-class TabBarViewItem extends ConsumerStatefulWidget {
-  const TabBarViewItem({
+class _ScheduleMeetingTabBarView extends ConsumerStatefulWidget {
+  const _ScheduleMeetingTabBarView({
     Key? key,
     required this.type,
   }) : super(key: key);
@@ -237,10 +237,11 @@ class TabBarViewItem extends ConsumerStatefulWidget {
   final String type;
 
   @override
-  createState() => _TabBarViewItemState();
+  createState() => __ScheduleMeetingTabBarViewState();
 }
 
-class _TabBarViewItemState extends ConsumerState<TabBarViewItem>
+class __ScheduleMeetingTabBarViewState
+    extends ConsumerState<_ScheduleMeetingTabBarView>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
@@ -253,38 +254,47 @@ class _TabBarViewItemState extends ConsumerState<TabBarViewItem>
         return RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(getScheduleMeetingByType(widget.type));
+            showSnackbar(
+              context,
+              text: const Text("Refresh berhasil"),
+              color: primary,
+            );
           },
-          child: Container(
-            constraints: BoxConstraints(
-              minHeight: h(context),
-            ),
-            child: Builder(
-              builder: (context) {
-                if (items.isEmpty) {
-                  return const Center(
-                      child: Text("Tidak ada jadwal pertemuan"));
-                }
-
-                return ListView.separated(
-                  padding: const EdgeInsets.only(
-                    left: 16.0,
-                    right: 16.0,
-                    top: 16.0,
-                    bottom: 60.0,
-                  ),
-                  itemCount: items.length,
-                  shrinkWrap: true,
-                  separatorBuilder: (context, index) => const Divider(),
-                  itemBuilder: (context, index) {
-                    final item = items[index];
-
-                    return _ScheduleMeetingItem(
-                      item: item,
-                      index: index,
+          child: SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(
+                minHeight: h(context),
+              ),
+              child: Builder(
+                builder: (context) {
+                  if (items.isEmpty) {
+                    return const Center(
+                      child: Text("Tidak ada jadwal pertemuan"),
                     );
-                  },
-                );
-              },
+                  }
+
+                  return ListView.separated(
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(
+                      left: 16.0,
+                      right: 16.0,
+                      top: 16.0,
+                      bottom: 60.0,
+                    ),
+                    itemCount: items.length,
+                    shrinkWrap: true,
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+
+                      return _ScheduleMeetingItem(
+                        item: item,
+                        index: index,
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ),
         );
@@ -355,7 +365,7 @@ class _ScheduleMeetingPageState extends State<ScheduleMeetingPage>
               controller: _controller,
               children: _typeScheduleMeeting
                   .map(
-                    (e) => TabBarViewItem(type: e.type),
+                    (e) => _ScheduleMeetingTabBarView(type: e.type),
                   )
                   .toList(),
             ),

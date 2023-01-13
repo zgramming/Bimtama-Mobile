@@ -147,6 +147,7 @@ class _ScheduleMeetingGroupFormPageState
               text: Text("${data?.message}"),
               color: Colors.green,
             );
+            context.pop();
           },
           error: (error, stackTrace) => showSnackbar(
             context,
@@ -157,6 +158,7 @@ class _ScheduleMeetingGroupFormPageState
             context,
             text: const Text("Loading..."),
             color: secondary,
+            duration: const Duration(seconds: 365),
           ),
         );
       },
@@ -175,6 +177,7 @@ class _ScheduleMeetingGroupFormPageState
               text: Text("${data?.message}"),
               color: Colors.green,
             );
+            context.pop();
           },
           error: (error, stackTrace) => showSnackbar(
             context,
@@ -185,6 +188,7 @@ class _ScheduleMeetingGroupFormPageState
             context,
             text: const Text("Loading..."),
             color: secondary,
+            duration: const Duration(days: 365),
           ),
         );
       },

@@ -11,7 +11,7 @@ GroupExitResponseModel _$GroupExitResponseModelFromJson(
     GroupExitResponseModel(
       success: json['success'] as bool,
       message: json['message'],
-      data: json['data'] as int?,
+      data: json['data'] as bool?,
     );
 
 Map<String, dynamic> _$GroupExitResponseModelToJson(

@@ -165,53 +165,56 @@ class _EmptyGuidance extends ConsumerWidget {
       },
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Card(
-          margin: const EdgeInsets.only(),
-          color: secondary,
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(16.0),
-            title: Text(
-              "Warning",
-              style: headerFontBold.copyWith(
-                color: Colors.white,
-                fontSize: 20.0,
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Card(
+            margin: const EdgeInsets.only(),
+            color: secondary,
+            child: ListTile(
+              contentPadding: const EdgeInsets.all(16.0),
+              title: Text(
+                "Warning",
+                style: headerFontBold.copyWith(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                ),
               ),
-            ),
-            subtitle: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                "Setelah kamu memulai bimbingan, kamu tidak diperbolehkan untuk mengubah outline. Pastikan kamu sudah memilih outline yang benar sebelum memulai bimbingan.",
-                style: bodyFontWhite.copyWith(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w100,
+              subtitle: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  "Setelah kamu memulai bimbingan, kamu tidak diperbolehkan untuk mengubah outline. Pastikan kamu sudah memilih outline yang benar sebelum memulai bimbingan.",
+                  style: bodyFontWhite.copyWith(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w100,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 16.0),
-        ElevatedButton.icon(
-          onPressed: () async {
-            final user = ref.read(userNotifier).item;
-            final token = user?.token ?? "";
+          const SizedBox(height: 16.0),
+          ElevatedButton.icon(
+            onPressed: () async {
+              final user = ref.read(userNotifier).item;
+              final token = user?.token ?? "";
 
-            await ref.read(mahasiswaGuidanceNotifier.notifier).start(
-                  token,
-                  userId: user?.data.id ?? 0,
-                );
-          },
-          style: elevatedButtonStyle(),
-          icon: const Icon(Icons.star),
-          label: Text(
-            "Mulai Bimbingan",
-            style: bodyFontWhite.copyWith(fontSize: 16.0),
-          ),
-        )
-      ],
+              await ref.read(mahasiswaGuidanceNotifier.notifier).start(
+                    token,
+                    userId: user?.data.id ?? 0,
+                  );
+            },
+            style: elevatedButtonStyle(),
+            icon: const Icon(Icons.star),
+            label: Text(
+              "Mulai Bimbingan",
+              style: bodyFontWhite.copyWith(fontSize: 16.0),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
@@ -370,65 +373,78 @@ class _GuidanceTabBarView extends ConsumerWidget {
     final menuIsAccessible =
         ref.watch(guidanceMenuIsAccessible(masterOutlineComponentCode));
 
-    if (!menuIsAccessible) {
-      return const Center(
-        child: Text("Kamu belum mempunyai akses ke menu ini"),
-      );
-    }
-
     final future = ref.watch(getGuidanceDetail(masterOutlineComponentCode));
     return future.when(
       data: (response) {
         final items = response.data ?? [];
         return Stack(
+          fit: StackFit.expand,
           children: [
             RefreshIndicator(
               onRefresh: () async {
-                ref.invalidate(getGuidanceDetail(masterOutlineComponentCode));
+                ref.invalidate(getGuidanceOutline);
                 showSnackbar(
                   context,
                   text: const Text("Reloaded"),
                   color: primary,
                 );
               },
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: items.length,
-                padding: const EdgeInsets.only(
-                  left: 16.0,
-                  right: 16.0,
-                  top: 16.0,
-                  bottom: 100.0,
+              child: SingleChildScrollView(
+                child: Container(
+                  constraints: BoxConstraints(minHeight: h(context)),
+                  child: Builder(
+                    builder: (context) {
+                      if (!menuIsAccessible) {
+                        return const Center(
+                          child: Text("Kamu belum mempunyai akses ke menu ini"),
+                        );
+                      }
+
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: items.length,
+                        padding: const EdgeInsets.only(
+                          left: 16.0,
+                          right: 16.0,
+                          top: 16.0,
+                          bottom: 100.0,
+                        ),
+                        separatorBuilder: (context, index) => const Divider(),
+                        itemBuilder: (context, index) {
+                          final item = items[index];
+                          return _GuidanceTabBarViewItem(
+                            item: item,
+                            index: index,
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
-                separatorBuilder: (context, index) => const Divider(),
-                itemBuilder: (context, index) {
-                  final item = items[index];
-                  return _GuidanceTabBarViewItem(
-                    item: item,
-                    index: index,
-                  );
-                },
               ),
             ),
-            Positioned(
-              bottom: 15,
-              right: 15,
-              child: FloatingActionButton.extended(
-                label: const Text("Pengajuan"),
-                icon: const Icon(Icons.add),
-                onPressed: () {
-                  context.pushNamed(
-                    routeMahasiswaGuidanceForm,
-                    params: {
-                      "codeMasterOutlineComponent": masterOutlineComponentCode,
-                    },
-                    extra: {
-                      "title": title,
-                    },
-                  );
-                },
-              ),
-            )
+            if (menuIsAccessible)
+              Positioned(
+                bottom: 15,
+                right: 15,
+                child: FloatingActionButton.extended(
+                  label: const Text("Pengajuan"),
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    context.pushNamed(
+                      routeMahasiswaGuidanceForm,
+                      params: {
+                        "codeMasterOutlineComponent":
+                            masterOutlineComponentCode,
+                      },
+                      extra: {
+                        "title": title,
+                      },
+                    );
+                  },
+                ),
+              )
           ],
         );
       },

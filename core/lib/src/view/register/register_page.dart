@@ -54,36 +54,46 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<UserModel?>>(
-        authenticationNotifier.select((value) => value.onRegister),
-        (previous, next) {
-      next.when(
-        data: (data) {
-          final group = data?.data.appGroupUser.code;
-          redirectHome(
-            data,
-            whenUnauthorized: () => context.goNamed(routeLogin),
-            onForbiddenUserGrup: () => showSnackbar(
-              context,
-              text: Text("Usergroup $group tidak tersedia"),
-              color: Colors.red,
-            ),
-            saveSession: () => ref.read(userNotifier.notifier).setUser(data!),
-            whenDosen: () => context.goNamed(routeDosenHome),
-            whenMahasiswa: () => context.goNamed(routeMahasiswaHome),
-          );
-        },
-        error: (error, stackTrace) => showSnackbar(
-          context,
-          text: Text("$error"),
-          color: Colors.red,
-        ),
-        loading: () => showSnackbar(
-          context,
-          text: const Text("Loading"),
-          color: secondary,
-        ),
-      );
-    });
+      authenticationNotifier.select((value) => value.onRegister),
+      (previous, next) {
+        next.when(
+          data: (data) {
+            final group = data?.data.appGroupUser.code;
+            redirectHome(
+              data,
+              whenUnauthorized: () => context.goNamed(routeLogin),
+              onForbiddenUserGrup: () => showSnackbar(
+                context,
+                text: Text("Usergroup $group tidak tersedia"),
+                color: Colors.red,
+              ),
+              saveSession: () {
+                ref.read(userNotifier.notifier).setUser(data!);
+                showSnackbar(
+                  context,
+                  text: const Text("Berhasil Registrasi"),
+                  color: Colors.green,
+                );
+              },
+              whenDosen: () => context.goNamed(routeDosenHome),
+              whenMahasiswa: () => context.goNamed(routeMahasiswaHome),
+            );
+          },
+          error: (error, stackTrace) => showSnackbar(
+            context,
+            text: Text("$error"),
+            color: Colors.red,
+          ),
+          loading: () => showSnackbar(
+            context,
+            text: const Text("Loading"),
+            color: secondary,
+            duration: const Duration(days: 365),
+          ),
+        );
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Register User"),

@@ -115,6 +115,7 @@ class _SettingActiveGroupPageState
             context,
             text: const Text("Loading..."),
             color: secondary,
+            duration: const Duration(seconds: 365),
           ),
         );
       },
@@ -130,12 +131,23 @@ class _SettingActiveGroupPageState
       });
     });
 
-    return future.unwrapPrevious().when(
-          data: (response) => Scaffold(
-            appBar: AppBar(
-              title: const Text("Edit Kelompok Aktif"),
-            ),
-            body: Column(
+    return future.when(
+      data: (response) {
+        final activeGroup = response.data;
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Edit Kelompok Aktif"),
+          ),
+          body: Builder(builder: (context) {
+            if (activeGroup == null) {
+              return Center(
+                child: Text(
+                  "${response.message}",
+                  style: bodyFontBold.copyWith(fontSize: 16.0),
+                ),
+              );
+            }
+            return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
@@ -199,14 +211,16 @@ class _SettingActiveGroupPageState
                   ),
                 )
               ],
-            ),
-          ),
-          error: (error, stackTrace) => Scaffold(
-            body: Center(child: Text("$error")),
-          ),
-          loading: () => const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          ),
+            );
+          }),
         );
+      },
+      error: (error, stackTrace) => Scaffold(
+        body: Center(child: Text("$error")),
+      ),
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+    );
   }
 }

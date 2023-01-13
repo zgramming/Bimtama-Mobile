@@ -249,8 +249,8 @@ class _ScheduleMeetingItem extends StatelessWidget {
   }
 }
 
-class TabBarViewItem extends ConsumerStatefulWidget {
-  const TabBarViewItem({
+class _ScheduleMeetingTabBarView extends ConsumerStatefulWidget {
+  const _ScheduleMeetingTabBarView({
     Key? key,
     required this.type,
   }) : super(key: key);
@@ -258,10 +258,11 @@ class TabBarViewItem extends ConsumerStatefulWidget {
   final String type;
 
   @override
-  createState() => _TabBarViewItemState();
+  createState() => __ScheduleMeetingTabBarViewState();
 }
 
-class _TabBarViewItemState extends ConsumerState<TabBarViewItem>
+class __ScheduleMeetingTabBarViewState
+    extends ConsumerState<_ScheduleMeetingTabBarView>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
@@ -270,64 +271,65 @@ class _TabBarViewItemState extends ConsumerState<TabBarViewItem>
     return future.when(
       data: (response) {
         final items = response.data;
-        if (items.isEmpty) {
-          return const Center(child: Text("Tidak ada jadwal pertemuan"));
-        }
-
-        return Stack(
-          fit: StackFit.expand,
-          children: [
-            RefreshIndicator(
-              onRefresh: () async {
-                ref.invalidate(getScheduleMeetingByType(widget.type));
-                showSnackbar(
-                  context,
-                  text: const Text("Refresh"),
-                  color: primary,
-                );
-              },
-              child: ListView.separated(
-                padding: const EdgeInsets.only(
-                  left: 16.0,
-                  right: 16.0,
-                  top: 16.0,
-                  bottom: 60.0,
+        return RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(getScheduleMeetingByType(widget.type));
+            showSnackbar(
+              context,
+              text: const Text("Refresh"),
+              color: primary,
+            );
+          },
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (items.isEmpty)
+                const Center(
+                  child: Text("Tidak ada jadwal pertemuan"),
                 ),
-                itemCount: items.length,
-                shrinkWrap: true,
-                separatorBuilder: (context, index) => const Divider(),
-                itemBuilder: (context, index) {
-                  final item = items[index];
+              if (items.isNotEmpty)
+                ListView.separated(
+                  padding: const EdgeInsets.only(
+                    left: 16.0,
+                    right: 16.0,
+                    top: 16.0,
+                    bottom: 60.0,
+                  ),
+                  itemCount: items.length,
+                  shrinkWrap: true,
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemBuilder: (context, index) {
+                    final item = items[index];
 
-                  return _ScheduleMeetingItem(
-                    item: item,
-                    index: index,
-                  );
-                },
-              ),
-            ),
-            Positioned(
-              bottom: 15,
-              right: 15,
-              child: InkWell(
-                onTap: () async {
-                  context.pushNamed(
-                    routeDosenScheduleMeetingForm,
-                    params: {
-                      "id": "0",
-                      "type": widget.type,
-                    },
-                  );
-                },
-                child: const CircleAvatar(
-                  backgroundColor: secondary,
-                  foregroundColor: Colors.white,
-                  radius: 30,
-                  child: Icon(Icons.add, size: 30.0),
+                    return _ScheduleMeetingItem(
+                      item: item,
+                      index: index,
+                    );
+                  },
                 ),
-              ),
-            )
-          ],
+              Positioned(
+                bottom: 15,
+                right: 15,
+                child: InkWell(
+                  onTap: () async {
+                    context.pushNamed(
+                      routeDosenScheduleMeetingForm,
+                      params: {
+                        "id": "0",
+                        "type": widget.type,
+                      },
+                    );
+                  },
+                  child: const CircleAvatar(
+                    backgroundColor: secondary,
+                    foregroundColor: Colors.white,
+                    radius: 30,
+                    child: Icon(Icons.add, size: 30.0),
+                  ),
+                ),
+              )
+            ],
+          ),
         );
       },
       error: (error, stackTrace) => Center(child: Text("$error")),
@@ -396,7 +398,7 @@ class _ScheduleMeetingPageState extends State<ScheduleMeetingPage>
               controller: _controller,
               children: _typeScheduleMeeting
                   .map(
-                    (e) => TabBarViewItem(type: e.type),
+                    (e) => _ScheduleMeetingTabBarView(type: e.type),
                   )
                   .toList(),
             ),

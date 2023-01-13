@@ -59,6 +59,7 @@ class _SettingProfilePageState extends ConsumerState<SettingProfilePage> {
             context,
             text: const Text("Loading..."),
             color: secondary,
+            duration: const Duration(days: 365),
           ),
         );
       },

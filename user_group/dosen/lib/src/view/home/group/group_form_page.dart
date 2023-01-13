@@ -7,6 +7,7 @@ import '../../../model/model/group_create_response_model.dart';
 import '../../../model/model/group_update_response_model.dart';
 import '../../../model/model/lecture_active_group_detail_model.dart';
 import '../../../view_model/group/group_notifier.dart';
+import '../../../view_model/guidance/guidance_notifier.dart';
 
 const _informations = [
   "Saat membuat kelompok, maka kelompok yang baru terbuat otomatis menjadi kelompok aktif kamu.",
@@ -130,8 +131,10 @@ class _GroupFormPageState extends ConsumerState<GroupFormPage> {
             );
 
             /// Refresh & clear form
-            ref.invalidate(getActiveGroup);
             _formKey.currentState?.reset();
+            ref.invalidate(getActiveGroup);
+            ref.invalidate(getGuidanceMasterOutline);
+            context.pop();
           },
           error: (error, stackTrace) => showSnackbar(
             context,
@@ -161,6 +164,7 @@ class _GroupFormPageState extends ConsumerState<GroupFormPage> {
             /// Refresh & clear form
             ref.invalidate(getActiveGroup);
             _formKey.currentState?.reset();
+            context.pop();
           },
           error: (error, stackTrace) => showSnackbar(
             context,

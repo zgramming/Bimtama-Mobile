@@ -14,14 +14,14 @@ class GroupExitResponseModel extends Equatable {
 
   final bool success;
   final dynamic message;
-  final int? data;
+  final bool? data;
 
   factory GroupExitResponseModel.fromJson(Map<String, dynamic> json) =>
       _$GroupExitResponseModelFromJson(json);
   Map<String, dynamic> toJson() => _$GroupExitResponseModelToJson(this);
 
   @override
-  List<Object?> get props => [success, data, message];
+  List<Object?> get props => [success, message, data];
 
   @override
   bool get stringify => true;

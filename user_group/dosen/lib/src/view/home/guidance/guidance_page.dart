@@ -178,8 +178,8 @@ class _GuidanceDetailItem extends StatelessWidget {
   }
 }
 
-class _TabBarViewItem extends ConsumerStatefulWidget {
-  const _TabBarViewItem({
+class _GuidanceTabBarView extends ConsumerStatefulWidget {
+  const _GuidanceTabBarView({
     Key? key,
     required this.outlineComponent,
   }) : super(key: key);
@@ -187,10 +187,10 @@ class _TabBarViewItem extends ConsumerStatefulWidget {
   final LectureGuidanceMasterOutlineData outlineComponent;
 
   @override
-  createState() => _TabBarViewItemState();
+  createState() => _GuidanceTabBarViewState();
 }
 
-class _TabBarViewItemState extends ConsumerState<_TabBarViewItem>
+class _GuidanceTabBarViewState extends ConsumerState<_GuidanceTabBarView>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
@@ -204,44 +204,50 @@ class _TabBarViewItemState extends ConsumerState<_TabBarViewItem>
         return Stack(
           fit: StackFit.expand,
           children: [
-            Builder(
-              builder: (context) {
-                if (items.isEmpty) {
-                  return const Center(
-                    child: Text("Bimbingan Tidak Ditemukan"),
-                  );
-                }
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    ref.invalidate(
-                      getGuidanceDetailByCodeOutlineComponent(
-                          widget.outlineComponent.code),
-                    );
-                    showSnackbar(
-                      context,
-                      text: const Text("Refresh"),
-                      color: primary,
-                    );
-                  },
-                  child: ListView.separated(
-                    padding: const EdgeInsets.only(
-                      left: 16.0,
-                      right: 16.0,
-                      top: 16.0,
-                      bottom: 40.0,
-                    ),
-                    itemCount: items.length,
-                    separatorBuilder: (context, index) => const Divider(),
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return _GuidanceDetailItem(
-                        guidance: item,
-                        index: index,
+            RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(getGuidanceDetailByCodeOutlineComponent);
+                showSnackbar(
+                  context,
+                  text: const Text("Refresh"),
+                  color: primary,
+                );
+              },
+              child: SingleChildScrollView(
+                child: Container(
+                  constraints: BoxConstraints(
+                    minHeight: h(context) - statusBarHeight(context),
+                  ),
+                  child: Builder(
+                    builder: (context) {
+                      if (items.isEmpty) {
+                        return const Center(
+                          child: Text("Bimbingan Tidak Ditemukan"),
+                        );
+                      }
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.only(
+                          left: 16.0,
+                          right: 16.0,
+                          top: 16.0,
+                          bottom: 40.0,
+                        ),
+                        itemCount: items.length,
+                        separatorBuilder: (context, index) => const Divider(),
+                        itemBuilder: (context, index) {
+                          final item = items[index];
+                          return _GuidanceDetailItem(
+                            guidance: item,
+                            index: index,
+                          );
+                        },
                       );
                     },
                   ),
-                );
-              },
+                ),
+              ),
             ),
             Positioned(
               bottom: 15,
@@ -348,7 +354,7 @@ class _GuidancePageState extends ConsumerState<GuidancePage>
                   controller: _controller,
                   children: outlinesComponent
                       .map(
-                        (e) => _TabBarViewItem(outlineComponent: e),
+                        (e) => _GuidanceTabBarView(outlineComponent: e),
                       )
                       .toList(),
                 ),

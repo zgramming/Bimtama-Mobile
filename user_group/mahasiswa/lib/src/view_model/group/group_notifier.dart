@@ -41,6 +41,7 @@ class GroupNotifier extends StateNotifier<GroupState> {
 
   Future<void> join(GroupJoinFormModel form) async {
     state = state.copyWith(onJoin: const AsyncLoading());
+    await Future.delayed(const Duration(milliseconds: 500));
     final result = await repository.join(form);
     result.fold(
       (failure) => state = state.copyWith(
@@ -52,6 +53,7 @@ class GroupNotifier extends StateNotifier<GroupState> {
 
   Future<void> exit(GroupExitFormModel form) async {
     state = state.copyWith(onExit: const AsyncLoading());
+    await Future.delayed(const Duration(milliseconds: 500));
     final result = await repository.exit(form);
     result.fold(
       (failure) => state = state.copyWith(

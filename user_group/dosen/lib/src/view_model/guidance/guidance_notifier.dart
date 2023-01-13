@@ -124,7 +124,7 @@ final getGuidanceDetailByCodeOutlineComponent = AutoDisposeFutureProviderFamily(
     );
 
     if (!response.success) {
-      throw Exception(response.message);
+      throw response.message;
     }
 
     return response;
