@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +22,28 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     controller = PersistentTabController();
+
+    firebaseMessaging.listen(
+      onMessage: (message) {
+        // final data = message.data;
+        final notification = message.notification;
+
+        if (notification != null) {
+          customLocalNotification.showNotification(
+            id: 2,
+            title: notification.title ?? "",
+            body: notification.body ?? "",
+            payload: null,
+          );
+          log("notification: ${notification.toMap()}");
+        }
+        log('Got a message whilst in the foreground!');
+        log("message: ${message.data}");
+      },
+      onmessageOpenedApp: (message) {
+        log('A new onMessageOpenedApp event was published!');
+      },
+    );
   }
 
   @override

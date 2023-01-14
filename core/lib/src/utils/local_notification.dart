@@ -62,7 +62,7 @@ class CustomLocalNotification {
     required String body,
     required String? payload,
   }) async {
-    const AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       'channel_bimbingan_id',
       'channel_bimmbingan_name',
@@ -70,8 +70,13 @@ class CustomLocalNotification {
       importance: Importance.max,
       priority: Priority.high,
       ticker: 'ticker',
+      styleInformation: BigTextStyleInformation(
+        body,
+        htmlFormatBigText: true,
+      ),
     );
-    const NotificationDetails notificationDetails = NotificationDetails(
+
+    NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
     );
 

@@ -46,9 +46,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   @override
   void dispose() {
-    super.dispose();
     usernameController.dispose();
     passwordController.dispose();
+    super.dispose();
   }
 
   @override

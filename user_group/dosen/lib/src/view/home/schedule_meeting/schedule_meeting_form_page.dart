@@ -121,14 +121,13 @@ class _ScheduleMeetingGroupFormPageState
 
   @override
   void dispose() {
-    super.dispose();
-
     titleController.dispose();
     descriptionController.dispose();
     linkMapsController.dispose();
     linkVirtualMeetingController.dispose();
     startDateController.dispose();
     endDateController.dispose();
+    super.dispose();
   }
 
   @override

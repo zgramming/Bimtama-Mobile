@@ -32,9 +32,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   void dispose() {
-    super.dispose();
     usernameController.dispose();
     passwordController.dispose();
+    super.dispose();
   }
 
   @override

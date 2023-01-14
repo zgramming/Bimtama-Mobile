@@ -4,3 +4,5 @@ const baseImageDirectoryURL = "$baseAPIURL/image";
 const baseFileDirectoryURL = "$baseAPIURL/file";
 const keyAuthentication = 'key_authentication';
 const availableUserGroup = ['mahasiswa', 'dosen'];
+
+const permissionNotificationKey = 'permission_notification';

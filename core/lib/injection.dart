@@ -6,10 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'src/model/datasource/authentication_remote_datasource.dart';
 import 'src/model/repository/authentication_repository.dart';
 import 'src/utils/constant.dart';
+import 'src/view_model/application_setting/application_setting_notifier.dart';
 import 'src/view_model/authentication/authentication_notifier.dart';
 import 'src/view_model/user/user_notifier.dart';
 
 //! Start Notifier
+final applicationSettingNotifier =
+    StateNotifierProvider<ApplicationSettingNotifier, ApplicationSettingState>(
+  (ref) => ApplicationSettingNotifier(),
+);
+
 final userNotifier = StateNotifierProvider<UserNotifier, UserState>(
   (ref) => UserNotifier(),
 );

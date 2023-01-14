@@ -1,8 +1,21 @@
+import 'dart:developer';
+
 import 'package:core/core.dart';
 
 import '../model/schedule_meeting_create_update_response_model.dart';
 
 class ScheduleMeetingFormModel extends Equatable {
+  final String token;
+  final int userId;
+  final String title;
+  final String description;
+  final String metode;
+  final String type;
+  final DateTime startDate;
+  final DateTime? endDate;
+  final String? linkVirtualMeeting;
+  final String? linkMaps;
+
   const ScheduleMeetingFormModel({
     required this.token,
     required this.userId,
@@ -15,17 +28,6 @@ class ScheduleMeetingFormModel extends Equatable {
     this.linkVirtualMeeting,
     this.linkMaps,
   });
-
-  final String token;
-  final int userId;
-  final String title;
-  final String description;
-  final String metode;
-  final String type;
-  final DateTime startDate;
-  final DateTime? endDate;
-  final String? linkVirtualMeeting;
-  final String? linkMaps;
 
   @override
   List<Object?> get props {
@@ -69,6 +71,7 @@ class ScheduleMeetingRemoteDatasource {
       if (form.linkMaps != null) "link_maps": form.linkMaps,
     });
 
+    log("form data: ${form.title}");
     final request = await dio.post(
       "/dosen/meeting-schedule",
       data: formData,

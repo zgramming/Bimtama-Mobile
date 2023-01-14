@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
 
     firebaseMessaging.listen(
       onMessage: (message) {
-        final data = message.data;
+        // final data = message.data;
         final notification = message.notification;
 
         if (notification != null) {

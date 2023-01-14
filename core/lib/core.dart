@@ -17,6 +17,7 @@ export 'package:intl/intl.dart' show DateFormat;
 export 'package:json_annotation/json_annotation.dart';
 export 'package:mime/mime.dart';
 export 'package:path/path.dart';
+export 'package:permission_handler/permission_handler.dart';
 export 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:uuid/uuid.dart';
