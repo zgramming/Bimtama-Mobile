@@ -9,6 +9,15 @@ class CustomLocalNotification {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  Future<bool?> requestPermission() async {
+    final result = await _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestPermission();
+
+    return result;
+  }
+
   Future<void> initialize({
     required void Function(NotificationResponse)?
         onDidReceiveNotificationResponse,

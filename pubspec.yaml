@@ -34,7 +34,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   dosen:
     path: user_group/dosen
-  firebase_core: ^2.4.1
   flutter:
     sdk: flutter
   mahasiswa:

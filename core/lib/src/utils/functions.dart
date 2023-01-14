@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:core/core.dart';
 import 'package:file_picker/file_picker.dart';
@@ -144,4 +145,10 @@ Future<File> pickFile() async {
   }
   final file = File(result.files.single.path ?? "");
   return file;
+}
+
+int generateUniqueIDNotification() {
+  final random = Random();
+  final id = random.nextInt(1000000000);
+  return id;
 }

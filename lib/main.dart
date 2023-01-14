@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:core/core.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
@@ -63,6 +62,9 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  /// https://github.com/firebase/flutterfire/issues/6011
+  await FirebaseMessaging.instance.getToken();
 
   runApp(const ProviderScope(child: MyApp()));
 }

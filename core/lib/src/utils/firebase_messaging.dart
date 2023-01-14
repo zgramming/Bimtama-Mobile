@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:core/core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class CustomFirebaseMessaging {
@@ -45,19 +46,47 @@ class CustomFirebaseMessaging {
     return result;
   }
 
-  void listen() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      log('Got a message whilst in the foreground!');
-      log('Message data: ${message.data}');
+  void listen({
+    void Function(RemoteMessage)? onMessage,
+    void Function(RemoteMessage)? onmessageOpenedApp,
+  }) {
+    FirebaseMessaging.onMessage.listen(
+      onMessage,
+      // (RemoteMessage message) {
+      //   log('Got a message whilst in the foreground!');
+      //   log('Message data: ${message.data}');
 
-      if (message.notification != null) {
-        log('Message also contained a notification: ${message.notification}');
-      }
-    });
+      //   if (message.notification != null) {
+      //     log('Message also contained a notification: ${message.notification?.toMap()}');
+      //   }
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      log('A new onMessageOpenedApp event was published!');
-    });
+      //   customLocalNotification.showNotification(
+      //     id: 2,
+      //     title: "title",
+      //     body: "body",
+      //     payload: "payload",
+      //   );
+      // },
+      onError: (Object e) {
+        log('onMessageError: $e');
+      },
+      onDone: () {
+        log('onMessageDone');
+      },
+    );
+
+    FirebaseMessaging.onMessageOpenedApp.listen(
+      onmessageOpenedApp,
+      // (RemoteMessage message) {
+      //   log('A new onMessageOpenedApp event was published!');
+      // },
+      onError: (Object e) {
+        log('onMessageOpenedAppError: $e');
+      },
+      onDone: () {
+        log('onMessageOpenedAppDone');
+      },
+    );
   }
 }
 

@@ -16,6 +16,8 @@ dependencies:
     path: ../user_group/dosen
   equatable: ^2.0.5
   file_picker: ^5.2.4
+  firebase_analytics: ^10.1.0
+  firebase_core: ^2.4.1
   firebase_messaging: ^14.2.1
   flutter:
     sdk: flutter
@@ -31,6 +33,7 @@ dependencies:
   mime: ^1.0.3
   path: ^1.8.2
   path_provider: ^2.0.11
+  permission_handler: ^10.2.0
   persistent_bottom_nav_bar: ^5.0.2
   shared_preferences: ^2.0.15
   url_launcher: ^6.1.7
