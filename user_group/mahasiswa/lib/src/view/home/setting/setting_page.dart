@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +20,24 @@ class SettingPage extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      ListTile(
+                        title: Text("testing notifikasi"),
+                        subtitle: ElevatedButton(
+                          onPressed: () async {
+                            try {
+                              await customLocalNotification.showNotification(
+                                id: 1,
+                                title: "Disini title",
+                                body: "Disini body",
+                                payload: "payload",
+                              );
+                            } catch (e) {
+                              log("$e");
+                            }
+                          },
+                          child: Text("show notification"),
+                        ),
+                      ),
                       ListTile(
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16.0,
