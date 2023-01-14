@@ -22,6 +22,8 @@ UserData _$UserDataFromJson(Map<String, dynamic> json) => UserData(
       email: json['email'] as String?,
       phone: json['phone'] as String?,
       username: json['username'] as String?,
+      appGroupUserId: json['app_group_user_id'] as int?,
+      tokenFirebase: json['token_firebase'] as String?,
       appGroupUser:
           AppGroupUser.fromJson(json['app_group_user'] as Map<String, dynamic>),
     );
@@ -32,6 +34,8 @@ Map<String, dynamic> _$UserDataToJson(UserData instance) => <String, dynamic>{
       'email': instance.email,
       'phone': instance.phone,
       'username': instance.username,
+      'app_group_user_id': instance.appGroupUserId,
+      'token_firebase': instance.tokenFirebase,
       'app_group_user': instance.appGroupUser,
     };
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:go_router/go_router.dart';
 
 import '../../../injection.dart';
 import '../../../router.dart';
+import '../../model/datasource/authentication_remote_datasource.dart';
 import '../../model/model/user_model.dart';
 import '../../utils/utils.dart';
 import '../widgets/form_body.dart';
@@ -172,11 +172,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () async {
-                  await ref.read(authenticationNotifier.notifier).register(
-                        username: usernameController.text,
-                        password: passwordController.text,
-                        codeGroup: selectedUserGroup?.code ?? "",
-                      );
+                  final firebaseToken = await firebaseMessaging.generateToken();
+                  final form = RegisterFormModel(
+                    username: usernameController.text,
+                    codeGroup: selectedUserGroup?.code ?? "",
+                    password: passwordController.text,
+                    token: firebaseToken ?? "",
+                  );
+                  await ref
+                      .read(authenticationNotifier.notifier)
+                      .register(form);
                 },
                 style: elevatedButtonStyle(),
                 child: Text(

@@ -48,14 +48,17 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  customLocalNotification.initializeNotification(
+
+  customLocalNotification.initialize(
     onDidReceiveNotificationResponse: (notification) {
       log("ondidiReceiveNotificationResponse: ${notification.payload}");
     },
     onDidReceiveLocalNotification: (id, title, body, payload) {
       log("message: $id, $title, $body, $payload");
     },
+    onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
   );
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

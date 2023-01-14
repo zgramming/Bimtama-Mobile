@@ -4,9 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../injection.dart';
 import '../../../router.dart';
+import '../../model/datasource/authentication_remote_datasource.dart';
 import '../../model/model/user_model.dart';
-import '../widgets/form_body.dart';
 import '../../utils/utils.dart';
+import '../widgets/form_body.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -134,10 +135,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       const SizedBox(height: 24.0),
                       ElevatedButton(
                         onPressed: () async {
-                          await ref.read(authenticationNotifier.notifier).login(
-                                username: usernameController.text,
-                                password: passwordController.text,
-                              );
+                          final firebaseToken =
+                              await firebaseMessaging.generateToken();
+                          final form = LoginFormModel(
+                            username: usernameController.text,
+                            password: passwordController.text,
+                            token: firebaseToken ?? "",
+                          );
+
+                          await ref
+                              .read(authenticationNotifier.notifier)
+                              .login(form);
                         },
                         style:
                             elevatedButtonStyle(backgroundColor: Colors.blue),

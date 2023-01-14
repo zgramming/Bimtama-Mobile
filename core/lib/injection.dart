@@ -4,7 +4,9 @@ import 'package:mahasiswa/mahasiswa.dart' as mahasiswa;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'src/model/datasource/authentication_remote_datasource.dart';
+import 'src/model/repository/authentication_repository.dart';
 import 'src/utils/constant.dart';
+import 'src/view_model/authentication/authentication_notifier.dart';
 import 'src/view_model/user/user_notifier.dart';
 
 //! Start Notifier

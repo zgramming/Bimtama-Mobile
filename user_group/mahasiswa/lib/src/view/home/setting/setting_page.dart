@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +6,32 @@ class SettingPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(authenticationNotifier.select((value) => value.onLogout),
+        (previous, next) {
+      next.when(
+        data: (response) async {
+          ref.read(userNotifier.notifier).unsetUser().then((value) {
+            context.goNamed(routeSplash);
+            showSnackbar(
+              context,
+              text: Text(response?.message),
+              color: Colors.green,
+            );
+          });
+        },
+        error: (error, stackTrace) => showSnackbar(
+          context,
+          text: Text(error.toString()),
+          color: Colors.red,
+        ),
+        loading: () => showSnackbar(
+          context,
+          text: const Text("Loading..."),
+          color: primary,
+        ),
+      );
+    });
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -20,24 +44,6 @@ class SettingPage extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      ListTile(
-                        title: Text("testing notifikasi"),
-                        subtitle: ElevatedButton(
-                          onPressed: () async {
-                            try {
-                              await customLocalNotification.showNotification(
-                                id: 1,
-                                title: "Disini title",
-                                body: "Disini body",
-                                payload: "payload",
-                              );
-                            } catch (e) {
-                              log("$e");
-                            }
-                          },
-                          child: Text("show notification"),
-                        ),
-                      ),
                       ListTile(
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16.0,
@@ -103,9 +109,10 @@ class SettingPage extends ConsumerWidget {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  ref.read(userNotifier.notifier).unsetUser().then((value) {
-                    context.goNamed(routeSplash);
-                  });
+                  final userId = ref.read(userNotifier).item?.data.id;
+                  await ref
+                      .read(authenticationNotifier.notifier)
+                      .logout(userId ?? 0);
                 },
                 style: elevatedButtonStyle(backgroundColor: Colors.red),
                 icon: const Icon(Icons.logout),

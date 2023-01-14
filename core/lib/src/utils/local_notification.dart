@@ -9,12 +9,12 @@ class CustomLocalNotification {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  Future<void> initializeNotification({
+  Future<void> initialize({
     required void Function(NotificationResponse)?
         onDidReceiveNotificationResponse,
     required void Function(int, String?, String?, String?)?
         onDidReceiveLocalNotification,
-    void Function(NotificationResponse)?
+    required void Function(NotificationResponse)?
         onDidReceiveBackgroundNotificationResponse,
   }) async {
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =

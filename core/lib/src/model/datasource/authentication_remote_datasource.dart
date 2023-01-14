@@ -1,12 +1,46 @@
-import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
-import 'package:equatable/equatable.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:core/core.dart';
 
-import '../../utils/utils.dart';
 import '../model/login_response_model.dart';
+import '../model/logout_response_model.dart';
 import '../model/register_response_model.dart';
-import '../model/user_model.dart';
+
+class LoginFormModel extends Equatable {
+  const LoginFormModel({
+    required this.username,
+    required this.password,
+    required this.token,
+  });
+
+  final String username;
+  final String password;
+  final String token;
+
+  @override
+  List<Object> get props => [username, password, token];
+
+  @override
+  bool get stringify => true;
+}
+
+class RegisterFormModel extends Equatable {
+  const RegisterFormModel({
+    required this.username,
+    required this.codeGroup,
+    required this.password,
+    required this.token,
+  });
+
+  final String username;
+  final String codeGroup;
+  final String password;
+  final String token;
+
+  @override
+  List<Object> get props => [username, codeGroup, password, token];
+
+  @override
+  bool get stringify => true;
+}
 
 class AuthenticationRemoteDatasource {
   final Dio dio;
@@ -14,13 +48,11 @@ class AuthenticationRemoteDatasource {
     required this.dio,
   });
 
-  Future<UserModel?> login({
-    required String username,
-    required String password,
-  }) async {
+  Future<UserModel?> login(LoginFormModel form) async {
     final formData = FormData.fromMap({
-      "username": username,
-      "password": password,
+      "username": form.username,
+      "password": form.password,
+      "token_firebase": form.token,
     });
     final request = await dio.post("/login", data: formData);
     final response = LoginResponseModel.fromJson(
@@ -41,16 +73,14 @@ class AuthenticationRemoteDatasource {
     );
   }
 
-  Future<UserModel?> register({
-    required String codeGroup,
-    required String username,
-    required String password,
-  }) async {
+  Future<UserModel?> register(RegisterFormModel form) async {
     final formData = FormData.fromMap({
-      "username": username,
-      "password": password,
-      "code_group": codeGroup,
+      "username": form.username,
+      "password": form.password,
+      "code_group": form.codeGroup,
+      "token_firebase": form.token,
     });
+
     final request = await dio.post("/beta/register", data: formData);
     final response = RegisterResponseModel.fromJson(request.data);
 
@@ -67,124 +97,20 @@ class AuthenticationRemoteDatasource {
       token: response.token!,
     );
   }
-}
 
-class AuthenticationRepository {
-  final AuthenticationRemoteDatasource remoteDatasource;
-  const AuthenticationRepository({
-    required this.remoteDatasource,
-  });
+  Future<LogoutResponseModel> logout(int userId) async {
+    final formData = FormData.fromMap({
+      "user_id": userId,
+    });
+    final request = await dio.post("/logout", data: formData);
+    final response = LogoutResponseModel.fromJson(
+      Map<String, dynamic>.from(request.data),
+    );
 
-  Future<Either<Failure, UserModel?>> login({
-    required String username,
-    required String password,
-  }) async {
-    try {
-      final result = await remoteDatasource.login(
-        username: username,
-        password: password,
-      );
-      return Right(result);
-    } catch (e) {
-      return Left(CommonFailure(e.toString()));
+    if (!response.success) {
+      throw CommonFailure(response.message);
     }
-  }
 
-  Future<Either<Failure, UserModel?>> register({
-    required String username,
-    required String password,
-    required String codeGroup,
-  }) async {
-    try {
-      final result = await remoteDatasource.register(
-        username: username,
-        password: password,
-        codeGroup: codeGroup,
-      );
-      return Right(result);
-    } catch (e) {
-      return Left(CommonFailure(e.toString()));
-    }
-  }
-}
-
-class AuthenticationNotifierState extends Equatable {
-  final AsyncValue<UserModel?> onLogin;
-  final AsyncValue<UserModel?> onRegister;
-
-  const AuthenticationNotifierState({
-    this.onLogin = const AsyncData(null),
-    this.onRegister = const AsyncData(null),
-  });
-
-  @override
-  List<Object> get props => [onLogin, onRegister];
-
-  @override
-  bool get stringify => true;
-
-  AuthenticationNotifierState copyWith({
-    AsyncValue<UserModel?>? onLogin,
-    AsyncValue<UserModel?>? onRegister,
-  }) {
-    return AuthenticationNotifierState(
-      onLogin: onLogin ?? this.onLogin,
-      onRegister: onRegister ?? this.onRegister,
-    );
-  }
-}
-
-class AuthenticationNotifier
-    extends StateNotifier<AuthenticationNotifierState> {
-  final AuthenticationRepository repository;
-  AuthenticationNotifier({
-    required this.repository,
-  }) : super(const AuthenticationNotifierState());
-
-  Future<void> login({
-    required String username,
-    required String password,
-  }) async {
-    state = state.copyWith(onLogin: const AsyncLoading());
-    final result = await repository.login(
-      username: username,
-      password: password,
-    );
-    result.fold(
-      (failure) {
-        state = state.copyWith(
-          onLogin: AsyncError(
-            failure.message,
-            StackTrace.current,
-          ),
-        );
-      },
-      (data) => state = state.copyWith(onLogin: AsyncData(data)),
-    );
-  }
-
-  Future<void> register({
-    required String username,
-    required String password,
-    required String codeGroup,
-  }) async {
-    state = state.copyWith(onRegister: const AsyncLoading());
-
-    final result = await repository.register(
-      username: username,
-      password: password,
-      codeGroup: codeGroup,
-    );
-    result.fold(
-      (failure) {
-        state = state.copyWith(
-          onRegister: AsyncError(
-            failure.message,
-            StackTrace.current,
-          ),
-        );
-      },
-      (data) => state = state.copyWith(onRegister: AsyncData(data)),
-    );
+    return response;
   }
 }

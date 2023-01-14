@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -36,6 +35,7 @@ class UserData extends Equatable {
   final String? phone;
   final String? username;
   final int? appGroupUserId;
+  final String? tokenFirebase;
   final AppGroupUser appGroupUser;
 
   const UserData({
@@ -45,6 +45,7 @@ class UserData extends Equatable {
     required this.phone,
     required this.username,
     this.appGroupUserId,
+    this.tokenFirebase,
     required this.appGroupUser,
   });
 
@@ -84,6 +85,7 @@ class UserData extends Equatable {
       phone,
       username,
       appGroupUserId,
+      tokenFirebase,
       appGroupUser,
     ];
   }
