@@ -16,12 +16,6 @@ void showSnackbar(
     content: Row(
       children: [
         Expanded(child: text),
-        // IconButton(
-        //   onPressed: () {
-        //     // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        //   },
-        //   icon: const Icon(Icons.close, color: Colors.white),
-        // )
       ],
     ),
     backgroundColor: color,
@@ -134,6 +128,8 @@ Future<String> openFile(String url) async {
 }
 
 Future<File> pickFile() async {
+  await customPermissionHandler.requestPermissionStorage();
+
   final result = await FilePicker.platform.pickFiles(
     dialogTitle: "Pilih file",
     type: FileType.custom,

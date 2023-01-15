@@ -71,7 +71,6 @@ class ScheduleMeetingRemoteDatasource {
       if (form.linkMaps != null) "link_maps": form.linkMaps,
     });
 
-    log("form data: ${form.title}");
     final request = await dio.post(
       "/dosen/meeting-schedule",
       data: formData,

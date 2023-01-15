@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:core/core.dart';
 import 'package:dosen/src/model/model/lecture_guidance_detail_outline_model.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../model/guidance_update_response_model.dart';
 
@@ -55,6 +56,8 @@ class GuidanceRemoteDatasource {
         },
       ),
     );
+
+    debugPrint("request guidance dosen $request");
 
     final response = GuidanceUpdateResponseModel.fromJson(
       Map<String, dynamic>.from(request.data),

@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
 
         if (notification != null) {
           customLocalNotification.showNotification(
-            id: 2,
+            id: generateUniqueIDNotification(),
             title: notification.title ?? "",
             body: notification.body ?? "",
             payload: null,

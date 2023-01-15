@@ -178,138 +178,141 @@ class _GuidanceFormPageState extends ConsumerState<GuidanceFormPage> {
             GuidanceStatus.progress;
         return Scaffold(
           appBar: AppBar(title: Text("Bimbingan ${guidance?.user?.name}")),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 16.0),
-                          FormBody(
-                            title: "Judul",
-                            child: Text(guidance?.title ?? ""),
-                          ),
-                          const SizedBox(height: 16.0),
-                          FormBody(
-                            title: "Deskripsi",
-                            child: Text(guidance?.description ?? ""),
-                          ),
-                          const SizedBox(height: 16.0),
-                          FormBody(
-                            title: "File Mahasiswa",
-                            child: Builder(builder: (context) {
-                              return Align(
-                                alignment: Alignment.centerLeft,
-                                child:
-                                    _ButtonDownloadFile(file: guidance?.file),
-                              );
-                            }),
-                          ),
-                          const SizedBox(height: 32.0),
-                          const Divider(thickness: 2, color: secondary),
-                          FormBody(
-                            title: "Catatan Dosen",
-                            child: TextFormField(
-                              controller: _lectureNoteController,
-                              minLines: 5,
-                              maxLines: 5,
-                              decoration: inputDecorationRounded().copyWith(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 8.0,
-                                  right: 8.0,
-                                  top: 16.0,
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const SizedBox(height: 16.0),
+                            FormBody(
+                              title: "Judul",
+                              child: Text(guidance?.title ?? ""),
+                            ),
+                            const SizedBox(height: 16.0),
+                            FormBody(
+                              title: "Deskripsi",
+                              child: Text(guidance?.description ?? ""),
+                            ),
+                            const SizedBox(height: 16.0),
+                            FormBody(
+                              title: "File Mahasiswa",
+                              child: Builder(builder: (context) {
+                                return Align(
+                                  alignment: Alignment.centerLeft,
+                                  child:
+                                      _ButtonDownloadFile(file: guidance?.file),
+                                );
+                              }),
+                            ),
+                            const SizedBox(height: 32.0),
+                            const Divider(thickness: 2, color: secondary),
+                            FormBody(
+                              title: "Catatan Dosen",
+                              child: TextFormField(
+                                controller: _lectureNoteController,
+                                minLines: 5,
+                                maxLines: 5,
+                                decoration: inputDecorationRounded().copyWith(
+                                  contentPadding: const EdgeInsets.only(
+                                    left: 8.0,
+                                    right: 8.0,
+                                    top: 16.0,
+                                  ),
                                 ),
+                                keyboardType: TextInputType.multiline,
+                                textInputAction: TextInputAction.newline,
                               ),
-                              keyboardType: TextInputType.multiline,
-                              textInputAction: TextInputAction.newline,
                             ),
-                          ),
-                          const SizedBox(height: 16.0),
-                          FormBody(
-                            title: "Status",
-                            child: DropdownButtonFormField<GuidanceStatus>(
-                              value: _selectedStatus,
-                              decoration: inputDecorationRounded(),
-                              items: GuidanceStatus.values
-                                  .map((e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text(e.name.toUpperCase())))
-                                  .toList(),
-                              onChanged: (value) {
-                                setState(() => _selectedStatus =
-                                    value ?? GuidanceStatus.progress);
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 16.0),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _ButtonUploadFile(
-                                onPickFile: (file) {
-                                  setState(() {
-                                    _selectedFile = file;
-                                  });
+                            const SizedBox(height: 16.0),
+                            FormBody(
+                              title: "Status",
+                              child: DropdownButtonFormField<GuidanceStatus>(
+                                value: _selectedStatus,
+                                decoration: inputDecorationRounded(),
+                                items: GuidanceStatus.values
+                                    .map((e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(e.name.toUpperCase())))
+                                    .toList(),
+                                onChanged: (value) {
+                                  setState(() => _selectedStatus =
+                                      value ?? GuidanceStatus.progress);
                                 },
                               ),
-                              if (_selectedFile != null) ...[
-                                const SizedBox(height: 8.0),
-                                Text(basename(_selectedFile?.path ?? "")),
-                              ]
-                            ],
-                          ),
-                          const SizedBox(height: 40.0),
-                        ],
+                            ),
+                            const SizedBox(height: 16.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _ButtonUploadFile(
+                                  onPickFile: (file) {
+                                    setState(() {
+                                      _selectedFile = file;
+                                    });
+                                  },
+                                ),
+                                if (_selectedFile != null) ...[
+                                  const SizedBox(height: 8.0),
+                                  Text(basename(_selectedFile?.path ?? "")),
+                                ]
+                              ],
+                            ),
+                            const SizedBox(height: 40.0),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              if (isProgress)
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final validate =
-                          _formKey.currentState?.validate() ?? false;
-                      if (!validate) {
-                        showSnackbar(
-                          context,
-                          text: const Text("Validation Error"),
-                          color: Colors.red,
+                if (isProgress)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final validate =
+                            _formKey.currentState?.validate() ?? false;
+                        if (!validate) {
+                          showSnackbar(
+                            context,
+                            text: const Text("Validation Error"),
+                            color: Colors.red,
+                          );
+                          return;
+                        }
+
+                        final id = widget.id;
+                        final user = ref.read(userNotifier).item;
+                        final token = user?.token ?? "";
+
+                        final form = GuidanceFormModel(
+                          token: token,
+                          id: id,
+                          lectureNote: _lectureNoteController.text,
+                          status: _selectedStatus,
+                          file: _selectedFile,
                         );
-                        return;
-                      }
-
-                      final id = widget.id;
-                      final user = ref.read(userNotifier).item;
-                      final token = user?.token ?? "";
-
-                      final form = GuidanceFormModel(
-                        token: token,
-                        id: id,
-                        lectureNote: _lectureNoteController.text,
-                        status: _selectedStatus,
-                        file: _selectedFile,
-                      );
-                      await ref
-                          .read(lectureGuidanceNotifier.notifier)
-                          .update(form);
-                    },
-                    style: elevatedButtonStyle(),
-                    child: Text(
-                      "Simpan",
-                      style: bodyFontWhite.copyWith(fontSize: 16.0),
+                        await ref
+                            .read(lectureGuidanceNotifier.notifier)
+                            .update(form);
+                      },
+                      style: elevatedButtonStyle(),
+                      child: Text(
+                        "Simpan",
+                        style: bodyFontWhite.copyWith(fontSize: 16.0),
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         );
       },

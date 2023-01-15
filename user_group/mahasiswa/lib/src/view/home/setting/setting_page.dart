@@ -100,6 +100,7 @@ class SettingPage extends ConsumerWidget {
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => '',
                       ),
+                      const SwitchNotification(),
                     ],
                   ),
                 ),

@@ -5,5 +5,6 @@ export './firebase_messaging.dart';
 export './fonts.dart';
 export './functions.dart';
 export './local_notification.dart';
+export './permission_handler.dart';
 export './sizes.dart';
 export './styles.dart';
