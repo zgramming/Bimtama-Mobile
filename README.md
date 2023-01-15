@@ -48,6 +48,7 @@ Bimbingan Tugas Akhir Bersama **Mobile Version**
 
 ## Demo
 
+https://user-images.githubusercontent.com/38829404/212543776-bdfc862c-2bde-4cdc-9213-a23d075bf4e2.mp4
 
 ## Related
 
