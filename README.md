@@ -1,16 +1,65 @@
-# bimtama
+![Banner](demo/banner.png)
 
-Bimbingan Tugas Akhir Bersama
+# Bimtama Mobile
 
-## Getting Started
+Bimbingan Tugas Akhir Bersama **Mobile Version**
 
-This project is a starting point for a Flutter application.
+## Tech Stack
 
-A few resources to get you started if this is your first Flutter project:
+**Client:** Flutter
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+**Server:** Node, KoaJS
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Installation
+
+1. `flutter clean && flutter pub get`
+2. Firebase services you should configure :
+   - [Firebase Core](https://firebase.flutter.dev/docs/overview)
+   - [Firebase Analytics](https://firebase.flutter.dev/docs/analytics/overview)
+   - [Firebase Cloud Messaging](https://firebase.flutter.dev/docs/messaging/overview)
+3. `flutter run`
+
+## Feature
+
+### Lecture
+
+- [x] Login & Registration
+- [x] Group
+- [x] Schedule Meeting
+- [x] Guidance
+- [x] Profile
+- [x] Active Group
+- [x] Notification when :
+  1. Create group or personal schedule meeting
+  2. Checking the results of student guidance (approved / rejected)
+
+### Student
+
+- [x] Login & Registration
+- [x] Group
+- [x] Schedule Meeting
+- [x] Guidance
+- [x] Profile
+- [x] Outline
+- [x] Notification when :
+  1. Join Group
+  2. Exit Group
+  3. Submission Guidance
+
+## Demo
+
+
+## Related
+
+Here are some related projects
+
+[Bimtama API](https://github.com/zgramming/Bimtama-API)
+[Bimtama Admin](https://github.com/zgramming/Bimtama-Admin)
+
+## Feedback
+
+If you have any feedback, please reach out to us at zeffry.reynando@gmail.com
+
+## Authors
+
+- [@zgramming](https://www.github.com/zgramming)
