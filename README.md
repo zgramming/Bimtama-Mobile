@@ -1,5 +1,9 @@
 ![Banner](demo/banner.png)
 
+<img src="https://ci.appveyor.com/api/projects/status/32r7s2skrgm9ubva?svg=true" alt="Project Badge" width="100">
+<img src="https://img.shields.io/github/followers/zgramming?style=social" alt="Project Badge" width="100">
+<a href="https://play.google.com/store/apps/details?id=zeffry.reynando.bimtama.bimtama"><img src="./assets/images/google-playstore.png" alt="Project Badge" width="100"></a>
+
 # Bimtama Mobile
 
 Bimbingan Tugas Akhir Bersama **Mobile Version**
